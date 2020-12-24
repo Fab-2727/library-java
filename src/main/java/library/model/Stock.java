@@ -1,16 +1,19 @@
 package library.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Stock {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	@MapsId
+	@OneToOne(optional = false)
+	@JoinColumn(name = "id_book", unique = true, nullable = false)
+	private Book bookId;
 	
 	private int stock;
 	

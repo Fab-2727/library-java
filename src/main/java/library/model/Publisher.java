@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Publisher {
@@ -15,6 +16,10 @@ public class Publisher {
 	private String publisherName;
 	private String address;
 	private String country;
+	
+	// Declaration of relationships
+	@OneToOne(optional = false, mappedBy = "publisher")
+	private Book book;
 	
 	public Publisher() {
 	}
