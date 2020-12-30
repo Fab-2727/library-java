@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import library.model.Book;
 import library.model.Publisher;
+import library.model.Topic;
 
 public interface LibraryService {
 
@@ -16,7 +17,6 @@ public interface LibraryService {
 	public ArrayList<Book> getBooksByAuthorId(int authorId);
 	public void addNewBook(Book bookNew);
 
-	/*
 	// Topic table
 	public ArrayList<Topic> getAllTopics();
 	public void addNewTopic(Topic topicNew);
@@ -24,7 +24,7 @@ public interface LibraryService {
 	// Stock table
 	public void updateStock(int bookId, int stockBook);
 	public int getStockByBookId(int bookId);
-	*/
+
 	// Publisher table
 	public ArrayList<Publisher> getAllPublishers();
 	public void addNewPublisher(Publisher publisherNew);

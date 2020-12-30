@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import library.model.Book;
 import library.model.Publisher;
+import library.model.Topic;
 import library.repository.PublisherRepository;
 
 @Service
@@ -66,6 +67,30 @@ public class LibraryServiceImpl implements LibraryService {
 	public void updatePublisherData(int publisherId, Publisher publisherData) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ArrayList<Topic> getAllTopics() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addNewTopic(Topic topicNew) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateStock(int bookId, int stockBook) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getStockByBookId(int bookId) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
