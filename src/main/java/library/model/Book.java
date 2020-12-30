@@ -1,5 +1,7 @@
 package library.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,8 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Book {
+public class Book implements Serializable {
 
+	private static final long serialVersionUID = 3734501213315682975L;
 	// id_book isbn book_name publish_year book_price description pages
 	// id_author id_topic id_publisher
 	// How to handle FK in ORM/JPA api springboot??
@@ -44,6 +47,9 @@ public class Book {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "id_topic", unique = true, nullable = false)
 	private Topic topic;
+	
+	@OneToOne(optional = false, mappedBy = "book")
+	private Stock stock;
 	
 	// how to make a foreign key primary key in another table
 	// or use a primary key 
