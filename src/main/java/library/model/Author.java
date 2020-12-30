@@ -15,8 +15,8 @@ public class Author {
 
 	private String authorName;
 	private String authorLastName;
-	
-	//@OneToOne(optional=false, mappedBy="customerRecord")
+
+	// @OneToOne(optional=false, mappedBy="customerRecord")
 	@OneToOne(optional = false, mappedBy = "author")
 	private Book book;
 
@@ -27,6 +27,14 @@ public class Author {
 		super();
 		this.authorName = authorName;
 		this.authorLastName = authorLastName;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getAuthorName() {

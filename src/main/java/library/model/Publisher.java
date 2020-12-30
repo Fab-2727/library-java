@@ -8,27 +8,35 @@ import javax.persistence.OneToOne;
 
 @Entity
 public class Publisher {
-	
+
 	@Id
-	@GeneratedValue(strategy =  GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String publisherName;
 	private String address;
 	private String country;
-	
+
 	// Declaration of relationships
 	@OneToOne(optional = false, mappedBy = "publisher")
 	private Book book;
-	
+
 	public Publisher() {
 	}
-	
+
 	public Publisher(String publisherName, String address, String country) {
 		super();
 		this.publisherName = publisherName;
 		this.address = address;
 		this.country = country;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getPublisherName() {
@@ -54,7 +62,5 @@ public class Publisher {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	
-	
-	
+
 }

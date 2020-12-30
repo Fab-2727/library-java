@@ -41,8 +41,14 @@ public class Book {
 	@JoinColumn(name = "id_publisher", unique = true, nullable = false)
 	private Publisher publisher;
 	
+	@OneToOne(optional = false)
+	@JoinColumn(name = "id_topic", unique = true, nullable = false)
+	private Topic topic;
+	
 	// how to make a foreign key primary key in another table
 	// or use a primary key 
+	
+	// It's missing the relationshipt between book and the STOCK of it
 	
 	public Book() {
 	}
