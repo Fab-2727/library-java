@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Publisher implements Serializable {
@@ -16,9 +17,12 @@ public class Publisher implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
+	@NotNull
 	private String publisherName;
+	@NotNull
 	private String address;
+	@NotNull
 	private String country;
 
 	// Declaration of relationships
@@ -65,6 +69,12 @@ public class Publisher implements Serializable {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+	
+	@Override
+	public String toString() {
+		String StrPublisherToString = "Publisher: "+this.publisherName+" "+this.address +" "+ this.country;
+		return StrPublisherToString;
 	}
 
 }

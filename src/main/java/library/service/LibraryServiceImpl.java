@@ -93,4 +93,9 @@ public class LibraryServiceImpl implements LibraryService {
 		return 0;
 	}
 
+	@Override
+	public Publisher getPublisherById(int publisherId) {
+		return publisherRepo.getOne(publisherId);
+	}
+
 }

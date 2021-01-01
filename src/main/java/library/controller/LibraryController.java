@@ -1,18 +1,25 @@
 package library.controller;
 
-import org.apache.coyote.http11.Http11AprProtocol;
-import org.json.HTTP;
-import org.json.JSONObject;
+import java.util.HashMap;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
+import library.model.Publisher;
 import library.service.LibraryServiceImpl;
 
 @RestController
@@ -21,6 +28,8 @@ public class LibraryController {
 	
 	@Autowired
 	private LibraryServiceImpl libraryService;
+	private ResponseEntity<String> responseSuccesful;
+	private ResponseEntity<String> responseError;
 	
 	@GetMapping(path = "/index")
 	public String index() {
@@ -28,8 +37,44 @@ public class LibraryController {
 	}
 	
 	@PostMapping(path = "/add-publisher", consumes = "application/json", produces = "application/json")
-	public String addNewPublisher(@RequestParam JSONObject jsonMessage) {
-		return jsonMessage.toString();
-	}	
+	public ResponseEntity<String> addNewPublisher(@Valid @NonNull @RequestBody Publisher publisher) {
+		/*
+		if (null == jsonMessage) {
+			throw new IllegalArgumentException("Bad request: a JSON message must be provided as payload");
+		}
+		*/
 		
+		responseSuccesful = ResponseEntity.status(HttpStatus.CREATED).body("{\"Status\":\"Publisher Created\"}");
+		System.out.println("Payload received" + publisher.toString());
+		return responseSuccesful;
+		
+	}
+	
+	// Method for getting publisher by ID
+	@GetMapping(path = "/publisher", consumes = "application/json", produces = "application/json")
+	public Publisher getPublisherById (@NonNull @RequestParam("id") int idPublisher) {
+		return libraryService.getPublisherById(idPublisher);
+	}
+	
+	@ExceptionHandler( MethodArgumentNotValidException.class )
+	public ResponseEntity<String> handleException(  MethodArgumentNotValidException ex, WebRequest request){
+		System.out.println("We are in the MethodArgumentNotValidException exception handler");
+		return new ResponseEntity<String>("BAD_REQUEST", HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request){
+		System.out.println("We are in the exception handler");
+		return new ResponseEntity<String>("INVALID_USE_BODY_MUST_BE_JSON",  HttpStatus.BAD_REQUEST);
+	}
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<String> handleException(Exception ex, WebRequest request){
+		System.out.println(ex);
+		System.out.println("We are in the exception handler");
+		return new ResponseEntity<String>("UNKOWN ERROR",  HttpStatus.BAD_REQUEST);
+	}
+	
+	
+	
+	
 }
