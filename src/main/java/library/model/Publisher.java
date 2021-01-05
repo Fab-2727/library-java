@@ -18,14 +18,18 @@ public class Publisher implements Serializable {
 	private static final long serialVersionUID = 2104087270831931122L;
 
 	@Id
+	@Column(name = "id_publisher")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	@NotNull
+	@Column(name = "publisher_name")
 	private String publisherName;
 	@NotNull
+	@Column(name = "address")
 	private String address;
 	@NotNull
+	@Column(name = "country")
 	private String country;
 
 	// Declaration of relationships

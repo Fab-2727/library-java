@@ -2,6 +2,7 @@ package library.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,10 +17,13 @@ public class Author implements Serializable {
 	private static final long serialVersionUID = -958993525449794383L;
 
 	@Id
+	@Column(name = "id_author")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
+	@Column(name = "author_name")
 	private String authorName;
+	@Column(name = "author_lastname")
 	private String authorLastName;
 
 	// @OneToOne(optional=false, mappedBy="customerRecord")

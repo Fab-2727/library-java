@@ -2,6 +2,7 @@ package library.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,11 +21,17 @@ public class Book implements Serializable {
 	// How to handle FK in ORM/JPA api springboot??
 
 	@Id
+	@Column(name = "id_book")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	private String isbn;
+	
+	@Column(name = "book_name")
 	private String bookName;
+	@Column(name = "publish_year")
 	private int publishYear;
+	@Column(name = "book_price")
 	private float price;
 	private String description;
 	private int pages;
