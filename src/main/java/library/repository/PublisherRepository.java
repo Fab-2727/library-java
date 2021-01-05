@@ -12,11 +12,5 @@ import library.model.Publisher;
 @Transactional(readOnly = true)
 @Repository
 public interface PublisherRepository extends JpaRepository<Publisher, Integer> {
-
-	public List<Publisher> findByPublisherName(String publisherName);
-	@Override
-	public Optional<Publisher> findById(Integer id);
-    @Override
-    public <S extends Publisher> S saveAndFlush(S entity);
-
+	public Optional<Publisher> findById(int id);
 }

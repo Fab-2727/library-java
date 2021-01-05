@@ -1,6 +1,8 @@
 package library.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -44,7 +46,7 @@ public class LibraryController {
 		}
 		*/
 		
-		responseSuccesful = ResponseEntity.status(HttpStatus.CREATED).body("{\"Status\":\"Publisher Created\"}");
+		responseSuccesful = ResponseEntity.status(HttpStatus.CREATED).body("{\"response\":\"Publisher Created\"}");
 		System.out.println("Payload received" + publisher.toString());
 		return responseSuccesful;
 		
@@ -52,25 +54,35 @@ public class LibraryController {
 	
 	// Method for getting publisher by ID
 	@GetMapping(path = "/publisher", consumes = "application/json", produces = "application/json")
-	public Publisher getPublisherById (@NonNull @RequestParam("id") int idPublisher) {
+	public Optional<Publisher> getPublisherById (@NonNull @RequestParam("id") int idPublisher) {
 		return libraryService.getPublisherById(idPublisher);
+	}
+	
+	@GetMapping(path = "/all", consumes = "application/json", produces = "application/json")
+	public ArrayList<Publisher> getPublisherById () {
+		
+		ArrayList<Publisher> publishersRetrieved = libraryService.getAllPublishers();
+		System.out.println(publishersRetrieved);
+		return publishersRetrieved;
 	}
 	
 	@ExceptionHandler( MethodArgumentNotValidException.class )
 	public ResponseEntity<String> handleException(  MethodArgumentNotValidException ex, WebRequest request){
 		System.out.println("We are in the MethodArgumentNotValidException exception handler");
+		System.out.println(ex);
 		return new ResponseEntity<String>("BAD_REQUEST", HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request){
-		System.out.println("We are in the exception handler");
+		System.out.println("We are in the IllegalArgumentException handler");
+		System.out.println(ex);
 		return new ResponseEntity<String>("INVALID_USE_BODY_MUST_BE_JSON",  HttpStatus.BAD_REQUEST);
 	}
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleException(Exception ex, WebRequest request){
+		System.out.println("We are in the BASIC exception");
 		System.out.println(ex);
-		System.out.println("We are in the exception handler");
 		return new ResponseEntity<String>("UNKOWN ERROR",  HttpStatus.BAD_REQUEST);
 	}
 	

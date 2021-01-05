@@ -1,6 +1,7 @@
 package library.service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,8 +95,8 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public Publisher getPublisherById(int publisherId) {
-		return publisherRepo.getOne(publisherId);
+	public Optional<Publisher> getPublisherById(int publisherId) {
+		return publisherRepo.findById(publisherId);
 	}
 
 }
