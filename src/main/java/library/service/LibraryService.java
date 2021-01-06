@@ -31,6 +31,7 @@ public interface LibraryService {
 	public ArrayList<Publisher> getAllPublishers();
 	public void addNewPublisher(Publisher publisherNew);
 	public void updatePublisherData(int publisherId, Publisher publisherData);
+	public Optional<Publisher> getOnePublisher(Integer publisherId);
 	
 	
 	

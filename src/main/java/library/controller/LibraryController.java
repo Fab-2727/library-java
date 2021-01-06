@@ -56,14 +56,10 @@ public class LibraryController {
 	@GetMapping(path = "/publisher", consumes = "application/json", produces = "application/json")
 	public Optional<Publisher> getPublisherById (@NonNull @RequestParam("id") Integer idPublisher) {
 
-		System.out.println("Id to find: "+idPublisher+" -");
-		Optional<Publisher> publisherFound = libraryService.getPublisherById(idPublisher);
-		System.out.println(publisherFound);
-		
-		Optional<Publisher> publisherFoundTwo = libraryService.getPublisherById(1);
-		System.out.println("With hard-code value: " +publisherFoundTwo);
-		System.out.println("With hard-code value: " + libraryService.getPublisherById(0));
-		System.out.println("With hard-code value: " + libraryService.getPublisherById(2));
+		// Optional<Publisher> publisherFound = libraryService.getPublisherById(idPublisher);
+		Optional<Publisher> publisherFound = libraryService.getOnePublisher(idPublisher);
+		// return an HTTP method OK with the JSON of the publisher if found
+		// Otherwise, return HTTP 404 NOT FOUND. check isExists
 		return publisherFound;
 	}
 	
