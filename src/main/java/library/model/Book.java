@@ -2,6 +2,7 @@ package library.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,7 +50,7 @@ public class Book implements Serializable {
 	@JoinColumn(name = "id_author", unique = true, nullable = false)
 	private Author author;
 	
-	@OneToOne(optional = false)
+	@OneToOne(optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_publisher", unique = true, nullable = false)
 	private Publisher publisher;
 	

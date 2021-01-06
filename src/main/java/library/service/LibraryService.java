@@ -27,7 +27,7 @@ public interface LibraryService {
 	public int getStockByBookId(int bookId);
 
 	// Publisher table
-	public Optional<Publisher> getPublisherById(int publisherId);
+	public Optional<Publisher> getPublisherById(Integer publisherId);
 	public ArrayList<Publisher> getAllPublishers();
 	public void addNewPublisher(Publisher publisherNew);
 	public void updatePublisherData(int publisherId, Publisher publisherData);

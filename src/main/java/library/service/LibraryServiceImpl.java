@@ -95,8 +95,9 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public Optional<Publisher> getPublisherById(int publisherId) {
+	public Optional<Publisher> getPublisherById(Integer publisherId) {
+		System.out.println("In serviceimpl "+publisherRepo.findById(publisherId));
 		return publisherRepo.findById(publisherId);
 	}
-
+	
 }

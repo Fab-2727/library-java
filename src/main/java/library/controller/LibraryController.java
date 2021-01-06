@@ -54,8 +54,17 @@ public class LibraryController {
 	
 	// Method for getting publisher by ID
 	@GetMapping(path = "/publisher", consumes = "application/json", produces = "application/json")
-	public Optional<Publisher> getPublisherById (@NonNull @RequestParam("id") int idPublisher) {
-		return libraryService.getPublisherById(idPublisher);
+	public Optional<Publisher> getPublisherById (@NonNull @RequestParam("id") Integer idPublisher) {
+
+		System.out.println("Id to find: "+idPublisher+" -");
+		Optional<Publisher> publisherFound = libraryService.getPublisherById(idPublisher);
+		System.out.println(publisherFound);
+		
+		Optional<Publisher> publisherFoundTwo = libraryService.getPublisherById(1);
+		System.out.println("With hard-code value: " +publisherFoundTwo);
+		System.out.println("With hard-code value: " + libraryService.getPublisherById(0));
+		System.out.println("With hard-code value: " + libraryService.getPublisherById(2));
+		return publisherFound;
 	}
 	
 	@GetMapping(path = "/all", consumes = "application/json", produces = "application/json")
