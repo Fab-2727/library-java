@@ -1,14 +1,18 @@
 package library.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import library.model.Author;
 import library.model.Book;
 import library.model.Publisher;
+import library.model.Stock;
 import library.model.Topic;
+import library.repository.AuthorRepository;
 import library.repository.BookRepository;
 import library.repository.PublisherRepository;
 import library.repository.StockRepository;
@@ -25,24 +29,34 @@ public class LibraryServiceImpl implements LibraryService {
 	private TopicRepository topicRepo;
 	@Autowired
 	private StockRepository stockRepo;
+	@Autowired
+	private AuthorRepository authorRepo;
 
 	//					BOOK methods IMPLEMENTATION
 	@Override
-	public Book getBookByID(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional<Book> getBookByID(Integer id) {
+		return bookRepository.findOneBookById(id);
 	}
 	
 	@Override
-	public ArrayList<Book> getBooksByName(String bookName) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Book> getBooksByName(String bookName) {
+		// test if it works
+		List<Book> similarBookByName = bookRepository.findBooksByName(bookName);
+		return similarBookByName;
 	}
 
 	@Override
 	public ArrayList<Book> getBooksByCategory(String category) {
-		// TODO Auto-generated method stub
-		return null;
+		// Probably 3 joins
+		Optional<Topic> catFound = this.getTopicByName(category);
+		
+		if ( catFound.isPresent() ) {
+			List<Book> booksByCat = bookRepository.findBooksByIdTopic(catFound.get().getId());
+			return (ArrayList<Book>) booksByCat;
+		} else {
+			return null; //Controller should interpret 'null' as topic doesn't exists
+		}
+
 	}
 
 	@Override
@@ -70,32 +84,51 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
+	public Topic getTopicByName(String topicName) {
+		Optional<Topic> topicFound = topicRepo.findByTopicName(topicName);
+		if (topicFound.isPresent()) {
+			return topicFound.get();
+		} else {
+			return null;
+		}
+
+	}
+	
+	@Override
 	public Topic addNewTopic(Topic topicNew) {
 		return topicRepo.save(topicNew);
 	}
 	
 	//					STOCK methods IMPLEMENTATION
 	@Override
-	public void updateStock(Integer bookId, Integer stockBook) {
+	public Boolean updateStock(Integer bookId, Integer stockBook) {
 		// check for possibles ERRORS and Exceptions
-		/*
-		Integer idFalse = 1;
-		topicRepo.deleteById(idFalse);
-		stockRepo.save(entity)
-		*/
-		return;
+		Optional<Stock> stockFound = stockRepo.findByIdBook(bookId);
+		if (stockFound.isPresent()) {
+			stockFound.get().setStock_book(stockBook);
+			stockRepo.save(stockFound.get());
+			return true;
+		} else {
+			return false; // book or stock not found
+		}
+
 	}
 
 	@Override
 	public Integer getStockByBookId(Integer bookId) {
-		// TODO
-		return null;
+		return stockRepo.findByIdBook(bookId).get().getId();
 	}
 
 	//					PUBLISHER methods IMPLEMENTATION
 	@Override
-	public Optional<Publisher> getPublisherById(Integer publisherId) {
-		return publisherRepo.findOnePublisherById(publisherId);
+	public Publisher getPublisherById(Integer publisherId) {
+		
+		Optional<Publisher> publisherFound = publisherRepo.findOnePublisherById(publisherId);
+		if (publisherFound.isPresent()) {
+			return publisherFound.get();
+		} else {
+			return null;
+		}
 	}
 	
 	@Override
@@ -117,6 +150,28 @@ public class LibraryServiceImpl implements LibraryService {
 
 	public Boolean publisherExists(Integer idPublisher) {
 		return publisherRepo.existsById(idPublisher);
+	}
+
+	//				AUTHOR methods IMPLEMENTATION
+	
+	@Override
+	public Author getAuthorById(Integer authorId) {
+		Optional<Author> authorFound = authorRepo.findOneAuthorById(authorId);
+		if (authorFound.isPresent()) {
+			return authorFound.get();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Author getAuthorsByName(String authorName) {
+		Optional<Author> authorFound = authorRepo.findByAuthorName(authorName);
+		if (authorFound.isPresent()) {
+			return authorFound.get();
+		} else {
+			return null;
+		}
 	}
 	
 	
