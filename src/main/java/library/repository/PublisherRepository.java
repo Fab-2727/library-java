@@ -13,6 +13,6 @@ public interface PublisherRepository extends JpaRepository<Publisher, Integer> {
 
 	
 	@Query("SELECT pu FROM Publisher pu WHERE pu.id = ?1")
-	public Optional<Publisher> findOnePublisher(Integer id);
+	public Optional<Publisher> findOnePublisherById(Integer id);
 	
 }
