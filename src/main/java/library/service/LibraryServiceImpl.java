@@ -9,20 +9,30 @@ import org.springframework.stereotype.Service;
 import library.model.Book;
 import library.model.Publisher;
 import library.model.Topic;
+import library.repository.BookRepository;
 import library.repository.PublisherRepository;
+import library.repository.StockRepository;
+import library.repository.TopicRepository;
 
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
 	@Autowired
+	private BookRepository bookRepository;
+	@Autowired
 	private PublisherRepository publisherRepo;
+	@Autowired
+	private TopicRepository topicRepo;
+	@Autowired
+	private StockRepository stockRepo;
 
+	//					BOOK methods IMPLEMENTATION
 	@Override
-	public Book getBookByID(int id) {
+	public Book getBookByID(Integer id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public ArrayList<Book> getBooksByName(String bookName) {
 		// TODO Auto-generated method stub
@@ -42,19 +52,55 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public ArrayList<Book> getBooksByAuthorId(int authorId) {
+	public ArrayList<Book> getBooksByAuthorId(Integer authorId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public void addNewBook(Book bookNew) {
 		// TODO Auto-generated method stub
 	}
+	
+	//					TOPIC methods IMPLEMENTATION
+	@Override
+	public ArrayList<Topic> getAllTopics() {
+		ArrayList<Topic> allTopics = (ArrayList<Topic>) topicRepo.findAll();
+		return allTopics;
+	}
 
-	// Publisher implementation
+	@Override
+	public Topic addNewTopic(Topic topicNew) {
+		return topicRepo.save(topicNew);
+	}
+	
+	//					STOCK methods IMPLEMENTATION
+	@Override
+	public void updateStock(Integer bookId, Integer stockBook) {
+		// check for possibles ERRORS and Exceptions
+		/*
+		Integer idFalse = 1;
+		topicRepo.deleteById(idFalse);
+		stockRepo.save(entity)
+		*/
+		return;
+	}
+
+	@Override
+	public Integer getStockByBookId(Integer bookId) {
+		// TODO
+		return null;
+	}
+
+	//					PUBLISHER methods IMPLEMENTATION
+	@Override
+	public Optional<Publisher> getPublisherById(Integer publisherId) {
+		return publisherRepo.findOnePublisherById(publisherId);
+	}
+	
 	@Override
 	public ArrayList<Publisher> getAllPublishers() {
+		// if( rsp == null ) throw NotFound
 		return (ArrayList<Publisher>) publisherRepo.findAll();
 	}
 
@@ -65,43 +111,12 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public void updatePublisherData(int publisherId, Publisher publisherData) {
+	public void updatePublisherData(Integer publisherId, Publisher publisherData) {
 		// TODO Auto-generated method stub
-
 	}
 
-	@Override
-	public ArrayList<Topic> getAllTopics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addNewTopic(Topic topicNew) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateStock(int bookId, int stockBook) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int getStockByBookId(int bookId) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Optional<Publisher> getPublisherById(Integer publisherId) {
-		return publisherRepo.findById(publisherId);
-	}
-
-	@Override
-	public Optional<Publisher> getOnePublisher(Integer publisherId) {
-		return publisherRepo.findOnePublisher(publisherId);
+	public Boolean publisherExists(Integer idPublisher) {
+		return publisherRepo.existsById(idPublisher);
 	}
 	
 	
