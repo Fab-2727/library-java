@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import library.exception.NotFoundException;
+import library.model.Author;
 import library.model.Book;
 import library.model.Publisher;
 import library.model.Stock;
 import library.model.Topic;
+import library.repository.TopicRepository;
 import library.service.LibraryServiceImpl;
 
 @RestController
@@ -79,18 +82,32 @@ public class LibraryController {
 	// Start of 'Topic' entity controller methods
 	
 	@GetMapping(path = "/topic/all", produces = "application/json" )
-	public ResponseEntity<String> getAllTopics() {
+	public ArrayList<Topic> getAllTopics() {
 		
+		// making request to DB
 		ArrayList<Topic> allTopics = libraryService.getAllTopics();
+		if (  allTopics != null && ! allTopics.isEmpty()) {
+			return allTopics;
+		} else {
+			throw new NotFoundException();
+		}
+	}
+	
+	@GetMapping(path = "/topic", produces = "application/json")
+	public Topic getTopicByName(@NonNull @RequestParam("name") String nameTopic){
 		
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+		Topic topicFound = libraryService.getTopicByName(nameTopic);
+		if (topicFound != null) {
+			return topicFound;
+		} else {
+			throw new NotFoundException();
+		}
 	}
 	
 	@PostMapping(path = "/topic/add-topic")
-	public void addNewTopic(@Valid @NonNull @RequestBody Topic topic) {
-		
-		//call service method for new topic, make validation
-		return;
+	public ResponseEntity<String> addNewTopic(@Valid @NonNull @RequestBody Topic topic) {
+		libraryService.addNewTopic(topic);
+		return ResponseEntity.status(HttpStatus.CREATED).body("{\"response\":\"Topic created\"}");
 	}
 	
 	// End of 'Topic' entity controller methods
@@ -100,15 +117,24 @@ public class LibraryController {
 	// Start of 'Stock' entity controller methods
 	
 	@PutMapping(path = "stock/update", consumes = "application/json", produces = "application/json")
-	public void updateStockOfBook(@NonNull @RequestParam("id-book") Integer idBook, @RequestParam("stock") Integer stock ) {
-		return;
+	public ResponseEntity<String> updateStockOfBook(@NonNull @RequestParam("id-book") Integer idBook, @RequestParam("stock") Integer stock ) {
+		Boolean respService = libraryService.updateStock(idBook, stock);
+		if (respService) {
+			return ResponseEntity.status(HttpStatus.OK).body("{\"response\":\"Stock updated\"}");
+		} else {
+			throw new NotFoundException();
+		}
 	}
 	
-	
-	@GetMapping(path = "book/stock-by-id", produces = "application/json")
-	public void getBookStockById (@NonNull @RequestParam("id") Integer idBook) {
-		// implement getStockByBookId
-		return;
+	@GetMapping(path = "book/stock/id-book", produces = "application/json")
+	public ResponseEntity<String> getBookStockById (@NonNull @RequestParam("id") Integer idBook) {
+		Integer actualStock = libraryService.getStockByBookId(idBook);
+		if (actualStock != null) {
+			return ResponseEntity.status(HttpStatus.OK).body("{ \"response\":\"200\", \"stock\":\""+actualStock+"\"}");
+		} else {
+			throw new NotFoundException();
+		}
+		
 	}
 	
 	// End of 'Stock' entity controller methods
@@ -120,10 +146,9 @@ public class LibraryController {
 	// This method returns a publisher by id (QueryParam)
 	// If the requested publisher doesn't exists: HTTP 404
 	@GetMapping(path = "/publisher", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Optional<Publisher>> getPublisherById (@NonNull @RequestParam("id") Integer idPublisher) {
-		
+	public ResponseEntity<Publisher> getPublisherById (@NonNull @RequestParam("id") Integer idPublisher) {
 		if ( libraryService.publisherExists(idPublisher) )  {
-			Optional<Publisher> publisherFound = libraryService.getPublisherById(idPublisher);
+			Publisher publisherFound = libraryService.getPublisherById(idPublisher);
 			return ResponseEntity.status(HttpStatus.OK).body(publisherFound);
 		} else {
 			throw new library.exception.NotFoundException();
@@ -135,31 +160,74 @@ public class LibraryController {
 	@GetMapping(path = "/publisher/all", produces = "application/json")
 	public ArrayList<Publisher> getAllPublisher() {
 		ArrayList<Publisher> publishersRetrieved = libraryService.getAllPublishers();
-		System.out.println(publishersRetrieved);
-		return publishersRetrieved;
+		
+		if (publishersRetrieved != null && ! publishersRetrieved.isEmpty() ) {
+			return publishersRetrieved;
+		} else {
+			throw new NotFoundException();
+		}
 	}
 	
 	// Add new Publisher, receives a JSON
 	@PostMapping(path = "/publisher/add-publisher", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> addNewPublisher(@Valid @NonNull @RequestBody Publisher publisher) {
-		/*
-		if (null == jsonMessage) {
-			throw new IllegalArgumentException("Bad request: a JSON message must be provided as payload");
+		try {
+			System.out.println("Payload received" + publisher.toString());
+			libraryService.addNewPublisher(publisher);
+			responseSuccesful = ResponseEntity.status(HttpStatus.CREATED).body("{\"response\":\"Publisher Created\"}");
+			return responseSuccesful;
+		} catch (Exception e) {
+			System.out.println(e);
 		}
-		*/
+		return responseError = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"ERROR\":\"500 - SERVER ERROR\"}");
 		
-		responseSuccesful = ResponseEntity.status(HttpStatus.CREATED).body("{\"response\":\"Publisher Created\"}");
-		System.out.println("Payload received" + publisher.toString());
-		return responseSuccesful;
 	}
 
-	@PutMapping(path = "/publisher/update-publisher", consumes = "application/json", produces = "application/json")
+	@PutMapping(path = "/publisher/update", consumes = "application/json", produces = "application/json")
 	public void updatePublisher (@Valid @NonNull @RequestBody Publisher dataNewPublisher) {
 		return;
 	}
 	
 	// End of 'Publisher' entity controller methods
-
+	
+	// ------------------------------------------------- //
+	
+	// Start of 'Author' entity controller methods	
+	
+	@GetMapping(path = "author", produces = "application/json")
+	public Author getAuthorById(@NonNull @RequestParam("id") Integer idAuthor){
+		Author authorFound = libraryService.getAuthorById(idAuthor);
+		if (authorFound != null) {
+			return authorFound;
+		} else {
+			throw new NotFoundException();
+		}
+	}
+	
+	@GetMapping(path = "author", produces = "application/json")
+	public Author getAuthorByName(@NonNull @RequestParam("name") String nameAuthor){
+		Author authorFound = libraryService.getAuthorsByName(nameAuthor);
+		if (authorFound != null) {
+			return authorFound;
+		} else {
+			throw new NotFoundException();
+		}
+	}
+	
+	@PostMapping(path = "author/add-author", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<String> addNewAuthor(@Valid @NonNull @RequestBody Author authorNew){
+		try {
+			libraryService.addNewAuthor(authorNew);
+			responseSuccesful = ResponseEntity.status(HttpStatus.CREATED).body("{\"response\":\"Author Created\"}");
+			return responseSuccesful;
+		} catch (IllegalArgumentException e) {
+			System.out.println(e);
+		}
+		// This response is for testing purposes only, it should be a NullPointerException
+		return responseError = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"ERROR\":\"500 - SERVER ERROR\"}");
+		
+	}
+	
 	
 	
 	//@ExceptionHandler(NullPointerException.class)
