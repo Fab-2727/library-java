@@ -24,7 +24,7 @@ public class Book implements Serializable {
 	@Id
 	@Column(name = "id_book")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private int id;
 	
 	private String isbn;
 	
@@ -79,11 +79,11 @@ public class Book implements Serializable {
 		this.pages = pages;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
