@@ -33,12 +33,12 @@ public class LibraryServiceImpl implements LibraryService {
 	@Autowired
 	private AuthorRepository authorRepo;
 
-	//					BOOK methods IMPLEMENTATION
+	// BOOK methods IMPLEMENTATION
 	@Override
 	public Optional<Book> getBookByID(Integer id) {
 		return bookRepository.findOneBookById(id);
 	}
-	
+
 	@Override
 	public List<Book> getBooksByName(String bookName) {
 		// test if it works
@@ -49,56 +49,55 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public ArrayList<Book> getBooksByCategory(String category) {
 		Optional<Topic> catFound = topicRepo.findByTopicName(category);
-		
-		if ( catFound.isPresent() ) {
+
+		if (catFound.isPresent()) {
 			List<Book> booksByCat = bookRepository.findByIdTopic(catFound.get().getId());
 			return (ArrayList<Book>) booksByCat;
 		} else {
-			return null; //Controller should interpret 'null' as topic doesn't exists
+			return null; // Controller should interpret 'null' as topic doesn't exists
 		}
 
 	}
 
 	@Override
 	public ArrayList<Book> getBooksByAuthorName(String authorName) {
-		
-		Optional<Author> authorFound = authorRepo.findByAuthorName(authorName);
-		
-		if ( authorFound.isPresent() ) {
-			List<Book> booksByAuthor =  bookRepository.findByIdAuthor(authorFound.get().getId());
+
+		List<Author> authorsFound = authorRepo.findByAuthorName(authorName);
+
+		if (! authorsFound.isEmpty()) {
+			// for testing purposes, only the first author
+			List<Book> booksByAuthor = bookRepository.findByIdAuthor(authorsFound.get(0).getId());
 			return (ArrayList<Book>) booksByAuthor;
 		} else {
-			return null; //Controller should interpret 'null' as author don't exists
+			return null; // Controller should interpret 'null' as author don't exists
 		}
 	}
 
 	@Override
 	public ArrayList<Book> getBooksByAuthorId(Integer authorId) {
 		List<Book> booksFound = bookRepository.findByIdAuthor(authorId);
-		if ( ! booksFound.isEmpty() ) {
+		if (!booksFound.isEmpty()) {
 			return (ArrayList<Book>) booksFound;
 		} else {
-			return null; //Controller should interpret 'null' as author don't exists
+			return null; // Controller should interpret 'null' as author don't exists
 		}
 	}
-	
+
 	@Override
 	public Book addNewBook(Book bookNew) {
 		return bookRepository.save(bookNew);
 	}
-	
-	//					TOPIC methods IMPLEMENTATION
+
+	// TOPIC methods IMPLEMENTATION
 	@Override
 	public ArrayList<Topic> getAllTopics() {
 		ArrayList<Topic> allTopics = (ArrayList<Topic>) topicRepo.findAll();
-		if (! allTopics.isEmpty()) {
+		if (!allTopics.isEmpty()) {
 			return allTopics;
 		} else {
 			return null; // Controller should interpret as NullPOinter
 		}
 	}
-	
-	
 
 	@Override
 	public Topic getTopicByName(String topicName) {
@@ -108,15 +107,16 @@ public class LibraryServiceImpl implements LibraryService {
 		} else {
 			return null;
 		}
-
 	}
-	
+
+	@Transactional
 	@Override
 	public Topic addNewTopic(Topic topicNew) {
 		return topicRepo.save(topicNew);
 	}
-	
-	//					STOCK methods IMPLEMENTATION
+
+	// STOCK methods IMPLEMENTATION
+	@Transactional
 	@Override
 	public Boolean updateStock(Integer bookId, Integer stockBook) {
 		// check for possibles ERRORS and Exceptions
@@ -133,8 +133,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	public Integer getStockByBookId(Integer bookId) {
-		Optional<Stock> stockFound =  stockRepo.findByIdBook(bookId);
-		
+		Optional<Stock> stockFound = stockRepo.findByIdBook(bookId);
+
 		if (stockFound.isPresent()) {
 			return stockFound.get().getStock_book();
 		} else {
@@ -142,10 +142,10 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 	}
 
-	//					PUBLISHER methods IMPLEMENTATION
+	// PUBLISHER methods IMPLEMENTATION
 	@Override
 	public Publisher getPublisherById(Integer publisherId) {
-		
+
 		Optional<Publisher> publisherFound = publisherRepo.findOnePublisherById(publisherId);
 		if (publisherFound.isPresent()) {
 			return publisherFound.get();
@@ -153,24 +153,25 @@ public class LibraryServiceImpl implements LibraryService {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public ArrayList<Publisher> getAllPublishers() {
-		// if( rsp == null ) throw NotFound
 		ArrayList<Publisher> allPublishers = (ArrayList<Publisher>) publisherRepo.findAll();
-		if (! allPublishers.isEmpty()) {
+		if (!allPublishers.isEmpty()) {
 			return allPublishers;
 		} else {
 			return null;
 		}
-	
-	}
 
+	}
+	
+	@Transactional
 	@Override
 	public void addNewPublisher(Publisher publisherNew) {
 		publisherRepo.save(publisherNew);
 	}
 
+	@Transactional
 	@Override
 	public Publisher updatePublisherData(Integer publisherId, Publisher publisherData) {
 		if (publisherExists(publisherId)) {
@@ -188,8 +189,8 @@ public class LibraryServiceImpl implements LibraryService {
 		return publisherRepo.existsById(idPublisher);
 	}
 
-	//				AUTHOR methods IMPLEMENTATION
-	
+	// AUTHOR methods IMPLEMENTATION
+
 	@Override
 	public Author getAuthorById(Integer authorId) {
 		Optional<Author> authorFound = authorRepo.findOneAuthorById(authorId);
@@ -201,20 +202,19 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public Author getAuthorsByName(String authorName) {
-		Optional<Author> authorFound = authorRepo.findByAuthorName(authorName);
-		if (authorFound.isPresent()) {
-			return authorFound.get();
+	public List<Author> getAuthorsByName(String authorName) {
+		List<Author> authorsRetrieved = authorRepo.findByAuthorName(authorName);
+		if (!authorsRetrieved.isEmpty()) {
+			return authorsRetrieved;
 		} else {
 			return null;
 		}
 	}
-	
+
 	public Author addNewAuthor(Author authorNew) {
 		return authorRepo.save(authorNew);
 	}
-	
-	
+
 	@Override
 	public Author updateAuthor(Integer authorId, Author authorData) {
 		Optional<Author> authorRetrieved = authorRepo.findOneAuthorById(authorId);
@@ -227,6 +227,5 @@ public class LibraryServiceImpl implements LibraryService {
 			return null;
 		}
 	}
-	
-	
+
 }

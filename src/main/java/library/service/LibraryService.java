@@ -38,7 +38,7 @@ public interface LibraryService {
 	
 	// Author table
 	public Author getAuthorById(Integer authorId);
-	public Author getAuthorsByName(String authorName);
+	public List<Author> getAuthorsByName(String authorName);
 	public Author addNewAuthor(Author authorNew);
 	public Author updateAuthor(Integer authorId, Author authorData);
 	
