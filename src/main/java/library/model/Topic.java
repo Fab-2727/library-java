@@ -52,5 +52,39 @@ public class Topic implements Serializable {
 	public void setTopic_name(String topicName) {
 		this.topicName = topicName;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Topic other = (Topic) obj;
+		
+		if (id == 0) {
+			if (other.id != 0) {
+				return false;
+			}
+		} else {
+			if (!(id == other.id)) {
+				return false;
+			}
+		}
+		if (topicName == null) {
+			if (other.topicName != null) {
+				return false;
+			}
+		} else if (!topicName.equals(other.topicName)) {
+			return false;
+		}
+		
+		return true;
+		
+	}
 
 }
