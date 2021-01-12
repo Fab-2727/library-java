@@ -19,6 +19,7 @@ import library.repository.PublisherRepository;
 import library.repository.StockRepository;
 import library.repository.TopicRepository;
 
+
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
@@ -42,7 +43,7 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public List<Book> getBooksByName(String bookName) {
 		// test if it works
-		List<Book> similarBookByName = bookRepository.findByName(bookName);
+		List<Book> similarBookByName = bookRepository.findByBookName(bookName);
 		return similarBookByName;
 	}
 
