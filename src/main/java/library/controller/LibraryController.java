@@ -50,7 +50,7 @@ public class LibraryController {
 		return;
 	}
 
-	@GetMapping(path = "/book", produces = "application/json")
+	@GetMapping(path = "/book/book-name", produces = "application/json")
 	public void getBooksByName(@NonNull @RequestParam("name-book") String nameBook) {
 
 		return;
@@ -62,13 +62,13 @@ public class LibraryController {
 		return; // ArrayList
 	}
 
-	@GetMapping(path = "/book/author", produces = "application/json")
-	public void getBooksByAuthor(@NonNull @RequestParam("name-author") String nameAuthor) {
+	@GetMapping(path = "/book/author-by-name", produces = "application/json")
+	public void getBooksByAuthorName(@NonNull @RequestParam("name-author") String nameAuthor) {
 		return;
 	}
 
-	@GetMapping(path = "/book/author", produces = "application/json")
-	public void getBooksByAuthor(@NonNull @RequestParam("author-id") Integer idAuthor) {
+	@GetMapping(path = "/book/author/id", produces = "application/json")
+	public void getBooksByIdAuthor(@NonNull @RequestParam("author-id") Integer idAuthor) {
 		return;
 	}
 
@@ -226,7 +226,7 @@ public class LibraryController {
 		}
 	}
 
-	@GetMapping(path = "author", produces = "application/json")
+	@GetMapping(path = "author/by-name", produces = "application/json")
 	public List<Author> getAuthorByName(@NonNull @RequestParam("name") String nameAuthor) {
 		List<Author> authorsFound = libraryService.getAuthorsByName(nameAuthor);
 		if (authorsFound != null && ! authorsFound.isEmpty()) {
