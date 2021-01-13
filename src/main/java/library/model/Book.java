@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -54,10 +55,11 @@ public class Book implements Serializable {
 	@JoinColumn(name = "id_publisher", unique = true, nullable = false)
 	private Publisher publisher;
 	
-	@OneToOne(optional = false)
-	@JoinColumn(name = "id_topic", unique = true, nullable = false)
+	// ManyToOne relationship, many book -> one topic
+    @ManyToOne(optional=false) 
+    @JoinColumn(name="id_topic", nullable=false, updatable=true)
 	private Topic topic;
-	
+
 	@OneToOne(optional = false, mappedBy = "book")
 	private Stock stock;
 	
@@ -133,6 +135,38 @@ public class Book implements Serializable {
 
 	public void setPages(int pages) {
 		this.pages = pages;
+	}
+
+	public Author getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(Author author) {
+		this.author = author;
+	}
+
+	public Publisher getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(Publisher publisher) {
+		this.publisher = publisher;
+	}
+
+	public Topic getTopic() {
+		return topic;
+	}
+
+	public void setTopic(Topic topic) {
+		this.topic = topic;
+	}
+
+	public Stock getStock() {
+		return stock;
+	}
+
+	public void setStock(Stock stock) {
+		this.stock = stock;
 	}
 
 }
