@@ -39,6 +39,16 @@ public class LibraryServiceImpl implements LibraryService {
 	public Optional<Book> getBookByID(Integer id) {
 		return bookRepository.findOneBookById(id);
 	}
+	
+	@Override
+	public List<Book> getAllBooks(){
+		List<Book> booksRetrieved = bookRepository.findAll();
+		if (! booksRetrieved.isEmpty()) {
+			return booksRetrieved;
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public List<Book> getBooksByName(String bookName) {
@@ -88,11 +98,43 @@ public class LibraryServiceImpl implements LibraryService {
 	public Book addNewBook(Book bookNew) {
 		return bookRepository.save(bookNew);
 	}
+	
+	@Transactional
+	@Override
+	public Book updateBookInfo(Integer bookId, Book bookData) {
+		if ( bookRepository.existsById(bookId) ) {
+			Optional<Book> bookRetrieve = bookRepository.findOneBookById(bookId);
+			
+			if (bookRetrieve.isPresent()) {
+				Book bookToUpdate = bookRetrieve.get();
+				
+				if ( bookData.getBookName() != null || ! (bookData.getBookName() == "") ) bookToUpdate.setBookName(bookData.getBookName()); 
+				if ( bookData.getIsbn() != null || ! (bookData.getIsbn() == "") ) bookToUpdate.setIsbn(bookData.getIsbn());
+				if ( bookData.getPublishYear() != 0 ) bookToUpdate.setPublishYear(bookData.getPublishYear()); 
+				
+				if ( bookData.getPrice() != 0.0f  ) bookToUpdate.setPrice(bookData.getPrice());
+				if ( bookData.getDescription() == null || !(bookData.getDescription() == "") ) bookToUpdate.setDescription(bookData.getDescription());
+				if ( bookData.getPages() != 0 ) bookToUpdate.setPages(bookData.getPages());
+				/*
+				if ( bookData.getAuthor() != null )
+				if ( bookData.getTopic() != null  )
+				if ( bookData.getPublisher() != null )
+				*/
+				return bookRepository.save(bookToUpdate);
+			} else {
+				return null;
+			}
+		
+		} else {
+			return null;
+		}
+	}
+	
 
 	// TOPIC methods IMPLEMENTATION
 	@Override
-	public ArrayList<Topic> getAllTopics() {
-		ArrayList<Topic> allTopics = (ArrayList<Topic>) topicRepo.findAll();
+	public List<Topic> getAllTopics() {
+		List<Topic> allTopics = topicRepo.findAll();
 		if (!allTopics.isEmpty()) {
 			return allTopics;
 		} else {
@@ -156,8 +198,8 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public ArrayList<Publisher> getAllPublishers() {
-		ArrayList<Publisher> allPublishers = (ArrayList<Publisher>) publisherRepo.findAll();
+	public List<Publisher> getAllPublishers() {
+		List<Publisher> allPublishers = publisherRepo.findAll();
 		if (!allPublishers.isEmpty()) {
 			return allPublishers;
 		} else {
@@ -224,6 +266,16 @@ public class LibraryServiceImpl implements LibraryService {
 			authorFound.setAuthorName(authorData.getAuthorName());
 			authorFound.setAuthorLastName(authorData.getAuthorLastName());
 			return authorRepo.save(authorFound);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Author> getAllAuthors(){
+		List<Author> authorsRetrieve =  authorRepo.findAll();
+		if (! authorsRetrieve.isEmpty()) {
+			return authorsRetrieve;
 		} else {
 			return null;
 		}
