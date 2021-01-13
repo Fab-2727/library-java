@@ -57,6 +57,18 @@ public class LibraryController {
 		// return ArrayList;
 	}
 
+	@GetMapping(path = "/book/all", produces = "application/json")
+	public List<Book> getAllBooks() {
+		List <Book> booksFound = libraryService.getAllBooks();
+		if (! booksFound.isEmpty()) {
+			return booksFound;
+		} else {
+			throw  new NotFoundException();
+		}
+	}
+
+	
+
 	@GetMapping(path = "/book/category", produces = "application/json")
 	public void getBooksByCategory(@NonNull @RequestParam("book-category") String bookCategory) {
 		return; // ArrayList
@@ -85,8 +97,8 @@ public class LibraryController {
 
 	// Retrieves all topics
 	@GetMapping(path = "/topic/all", produces = "application/json")
-	public ArrayList<Topic> getAllTopics() {
-		ArrayList<Topic> allTopics = libraryService.getAllTopics();
+	public List<Topic> getAllTopics() {
+		List<Topic> allTopics = libraryService.getAllTopics();
 		if (allTopics != null && !allTopics.isEmpty()) {
 			return allTopics;
 		} else {
@@ -170,8 +182,8 @@ public class LibraryController {
 
 	// return all publishers
 	@GetMapping(path = "/publisher/all", produces = "application/json")
-	public ArrayList<Publisher> getAllPublisher() {
-		ArrayList<Publisher> publishersRetrieved = libraryService.getAllPublishers();
+	public List<Publisher> getAllPublisher() {
+		List<Publisher> publishersRetrieved = libraryService.getAllPublishers();
 
 		if (publishersRetrieved != null && !publishersRetrieved.isEmpty()) {
 			return publishersRetrieved;
@@ -228,6 +240,7 @@ public class LibraryController {
 
 	@GetMapping(path = "author/by-name", produces = "application/json")
 	public List<Author> getAuthorByName(@NonNull @RequestParam("name") String nameAuthor) {
+
 		List<Author> authorsFound = libraryService.getAuthorsByName(nameAuthor);
 		if (authorsFound != null && ! authorsFound.isEmpty()) {
 			return authorsFound;
@@ -265,6 +278,17 @@ public class LibraryController {
 				.body("{\"ERROR\":\"500 - SERVER ERROR\"}");
 	}
 
+	@GetMapping(path = "author/all", produces = "application/json")
+	public List<Author> getAllAuthors (){
+		List<Author> authorsRetrieve = libraryService.getAllAuthors();
+		System.out.println(authorsRetrieve);
+		if ( authorsRetrieve != null && ! authorsRetrieve.isEmpty() ) {
+			return authorsRetrieve;
+		} else {
+			throw new NotFoundException();
+		}
+	}
+	
 	// @ExceptionHandler(NullPointerException.class)
 	/*
 	 * @ExceptionHandler( MethodArgumentNotValidException.class ) public
