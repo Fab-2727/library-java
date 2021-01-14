@@ -141,6 +141,16 @@ public class LibraryServiceImpl implements LibraryService {
 			return null; // Controller should interpret as NullPOinter
 		}
 	}
+	
+	@Override
+	public Topic getTopicById(Integer topicId) {
+		Optional<Topic> topicRetrieve = topicRepo.findOneTopicById(topicId);
+		if (topicRetrieve.isPresent()) {
+			return topicRetrieve.get();
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public Topic getTopicByName(String topicName) {
@@ -159,6 +169,18 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	// STOCK methods IMPLEMENTATION
+	
+	@Override
+	public List<Stock> getAllStocks(){
+		List<Stock> stocksRetrieved = stockRepo.findAll();
+		
+		if (! stocksRetrieved.isEmpty()) {
+			return stocksRetrieved;
+		} else {
+			return null;
+		}
+	}
+	
 	@Transactional
 	@Override
 	public Boolean updateStock(Integer bookId, Integer stockBook) {
