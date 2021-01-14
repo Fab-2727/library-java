@@ -2,7 +2,6 @@ package library.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,22 +36,15 @@ public class Book implements Serializable {
 	private float price;
 	private String description;
 	private int pages;
-	// the non-owning side must use the mapped By element of the OneToOne annotation
-	// to specify the relationship field or property of the owning side.
-	/*
-	 * @OneToOne(optional=false)
-	 * 
-	 * @JoinColumn( name="CUSTREC_ID", unique=true, nullable=false, updatable=false)
-	 * public CustomerRecord getCustomerRecord() { return customerRecord; }
-	 */
 
 	// Declaration of relationships
-	@OneToOne(optional = false)
-	@JoinColumn(name = "id_author", unique = true, nullable = false)
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_author", nullable = false, updatable = true)
 	private Author author;
 	
-	@OneToOne(optional = false, cascade = CascadeType.ALL)
-	@JoinColumn(name = "id_publisher", unique = true, nullable = false)
+	@ManyToOne(optional = false)
+	@JoinColumn(name="id_publisher", nullable = false, updatable = true)
 	private Publisher publisher;
 	
 	// ManyToOne relationship, many book -> one topic

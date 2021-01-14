@@ -1,13 +1,15 @@
 package library.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -26,9 +28,9 @@ public class Author implements Serializable {
 	@Column(name = "author_lastname")
 	private String authorLastName;
 
-	// @OneToOne(optional=false, mappedBy="customerRecord")
-	@OneToOne(optional = false, mappedBy = "author")
-	private Book book;
+	// Declaration of relationships
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Book> books;
 
 	public Author() {
 	}
