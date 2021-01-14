@@ -105,6 +105,17 @@ public class LibraryController {
 			throw new NotFoundException();
 		}
 	}
+	
+	// Get one topic by Id
+	@GetMapping(path = "/topic", produces = "application/json")
+	public Topic getTopicById(@NonNull @RequestParam("id") Integer idTopic) {
+		Topic topicFound = libraryService.getTopicById(idTopic);
+		if (topicFound != null) {
+			return topicFound;
+		} else {
+			throw new NotFoundException();
+		}
+	}
 
 	// Get one topic by Name
 	@GetMapping(path = "/topic", produces = "application/json")
@@ -137,6 +148,16 @@ public class LibraryController {
 	// ------------------------------------------------- //
 
 	// Start of 'Stock' entity controller methods
+	
+	@GetMapping(path = "stock/all", produces = "application/json")
+	public List<Stock> getAllStocks (){
+		List<Stock> stocksFound = libraryService.getAllStocks();
+		if (stocksFound != null && ! (stocksFound.isEmpty()) ) {
+			return stocksFound;
+		} else {
+			throw new NotFoundException();
+		}
+	}
 
 	@PutMapping(path = "stock/update", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> updateStockOfBook(@NonNull @RequestParam("id-book") Integer idBook,
