@@ -107,7 +107,7 @@ public class LibraryController {
 	}
 	
 	// Get one topic by Id
-	@GetMapping(path = "/topic", produces = "application/json")
+	@GetMapping(path = "/topic/by-id", produces = "application/json")
 	public Topic getTopicById(@NonNull @RequestParam("id") Integer idTopic) {
 		Topic topicFound = libraryService.getTopicById(idTopic);
 		if (topicFound != null) {
