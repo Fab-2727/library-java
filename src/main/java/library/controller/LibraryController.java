@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import library.exception.ApiError;
 import library.exception.NotFoundException;
 import library.model.Author;
 import library.model.Book;
@@ -34,6 +37,13 @@ public class LibraryController {
 
 	@Autowired
 	private LibraryServiceImpl libraryService;
+	
+	//@Value("")
+	private String successfullHttpResponse;
+	//@Value("")
+	private String errorHttpCodeResponse;
+	
+	
 	private ResponseEntity<String> responseSuccesful;
 	private ResponseEntity<String> responseError;
 
@@ -58,7 +68,7 @@ public class LibraryController {
 	}
 
 	@GetMapping(path = "/book/all", produces = "application/json")
-	public List<Book> getAllBooks() {
+	public List<Book> getAllBooks()  throws NotFoundException{
 		List <Book> booksFound = libraryService.getAllBooks();
 		if (! booksFound.isEmpty()) {
 			return booksFound;
@@ -97,7 +107,7 @@ public class LibraryController {
 
 	// Retrieves all topics
 	@GetMapping(path = "/topic/all", produces = "application/json")
-	public List<Topic> getAllTopics() {
+	public List<Topic> getAllTopics()  throws NotFoundException{
 		List<Topic> allTopics = libraryService.getAllTopics();
 		if (allTopics != null && !allTopics.isEmpty()) {
 			return allTopics;
@@ -108,7 +118,7 @@ public class LibraryController {
 	
 	// Get one topic by Id
 	@GetMapping(path = "/topic/by-id", produces = "application/json")
-	public Topic getTopicById(@NonNull @RequestParam("id") Integer idTopic) {
+	public Topic getTopicById(@NonNull @RequestParam("id") Integer idTopic)  throws NotFoundException{
 		Topic topicFound = libraryService.getTopicById(idTopic);
 		if (topicFound != null) {
 			return topicFound;
@@ -119,7 +129,7 @@ public class LibraryController {
 
 	// Get one topic by Name
 	@GetMapping(path = "/topic", produces = "application/json")
-	public Topic getTopicByName(@NonNull @RequestParam("name") String nameTopic) {
+	public Topic getTopicByName(@NonNull @RequestParam("name") String nameTopic)  throws NotFoundException {
 		Topic topicFound = libraryService.getTopicByName(nameTopic);
 		if (topicFound != null) {
 			return topicFound;
@@ -150,7 +160,7 @@ public class LibraryController {
 	// Start of 'Stock' entity controller methods
 	
 	@GetMapping(path = "stock/all", produces = "application/json")
-	public List<Stock> getAllStocks (){
+	public List<Stock> getAllStocks ()  throws NotFoundException {
 		List<Stock> stocksFound = libraryService.getAllStocks();
 		if (stocksFound != null && ! (stocksFound.isEmpty()) ) {
 			return stocksFound;
@@ -161,7 +171,7 @@ public class LibraryController {
 
 	@PutMapping(path = "stock/update", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> updateStockOfBook(@NonNull @RequestParam("id-book") Integer idBook,
-			@RequestParam("stock") Integer stock) {
+			@RequestParam("stock") Integer stock)  throws NotFoundException{
 		Boolean respService = libraryService.updateStock(idBook, stock);
 		if (respService) {
 			return ResponseEntity.status(HttpStatus.OK).body("{\"response\":\"Stock updated\"}");
@@ -171,7 +181,7 @@ public class LibraryController {
 	}
 
 	@GetMapping(path = "book/stock/id-book", produces = "application/json")
-	public ResponseEntity<String> getBookStockById(@NonNull @RequestParam("id") Integer idBook) {
+	public ResponseEntity<String> getBookStockById(@NonNull @RequestParam("id") Integer idBook)  throws NotFoundException{
 		Integer actualStock = libraryService.getStockByBookId(idBook);
 		if (actualStock != null) {
 			return ResponseEntity.status(HttpStatus.OK)
@@ -191,7 +201,7 @@ public class LibraryController {
 	// This method returns a publisher by id (QueryParam)
 	// If the requested publisher doesn't exists: HTTP 404
 	@GetMapping(path = "/publisher", consumes = "application/json", produces = "application/json")
-	public Publisher getPublisherById(@NonNull @RequestParam("id") Integer idPublisher) {
+	public Publisher getPublisherById(@NonNull @RequestParam("id") Integer idPublisher)  throws NotFoundException {
 		Publisher publisherRetrieved = libraryService.getPublisherById(idPublisher);
 		if (publisherRetrieved != null) {
 			return publisherRetrieved;
@@ -203,7 +213,7 @@ public class LibraryController {
 
 	// return all publishers
 	@GetMapping(path = "/publisher/all", produces = "application/json")
-	public List<Publisher> getAllPublisher() {
+	public List<Publisher> getAllPublisher() throws NotFoundException {
 		List<Publisher> publishersRetrieved = libraryService.getAllPublishers();
 
 		if (publishersRetrieved != null && !publishersRetrieved.isEmpty()) {
@@ -250,7 +260,7 @@ public class LibraryController {
 	// Start of 'Author' entity controller methods
 
 	@GetMapping(path = "author", produces = "application/json")
-	public Author getAuthorById(@NonNull @RequestParam("id") Integer idAuthor) {
+	public Author getAuthorById(@NonNull @RequestParam("id") Integer idAuthor) throws NotFoundException {
 		Author authorFound = libraryService.getAuthorById(idAuthor);
 		if (authorFound != null) {
 			return authorFound;
@@ -260,7 +270,7 @@ public class LibraryController {
 	}
 
 	@GetMapping(path = "author/by-name", produces = "application/json")
-	public List<Author> getAuthorByName(@NonNull @RequestParam("name") String nameAuthor) {
+	public List<Author> getAuthorByName(@NonNull @RequestParam("name") String nameAuthor) throws NotFoundException {
 
 		List<Author> authorsFound = libraryService.getAuthorsByName(nameAuthor);
 		if (authorsFound != null && ! authorsFound.isEmpty()) {
@@ -300,13 +310,15 @@ public class LibraryController {
 	}
 
 	@GetMapping(path = "author/all", produces = "application/json")
-	public List<Author> getAllAuthors (){
+	public ResponseEntity<Object> getAllAuthors () {
 		List<Author> authorsRetrieve = libraryService.getAllAuthors();
 		System.out.println(authorsRetrieve);
+
 		if ( authorsRetrieve != null && ! authorsRetrieve.isEmpty() ) {
-			return authorsRetrieve;
+			return new ResponseEntity<Object>(authorsRetrieve, null);
 		} else {
-			throw new NotFoundException();
+			System.out.println("Estoy aca!");
+			return new ResponseEntity<Object>(new ApiError(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "None author found"), HttpStatus.NOT_FOUND);
 		}
 	}
 	
