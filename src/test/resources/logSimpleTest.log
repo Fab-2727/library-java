@@ -1,0 +1,88 @@
+#         STARTING SCRIPTS        #
+[0;33m 0 - URL: http://localhost:8080/library/book?id= [0m
+
+[0;33m 1 - URL: http://localhost:8080/library/book/name?name-book= [0m
+
+[0;33m 2 - URL: http://localhost:8080/library/book/all [0m
+
+[0;33m 3 - URL: http://localhost:8080/library/book/category?book-category= [0m
+
+[0;33m 4 - URL: http://localhost:8080/library/book/author?name= [0m
+
+[0;33m 5 - URL: http://localhost:8080/library/book/author?author-id= [0m
+
+[0;33m 6 - URL: http://localhost:8080/library/book/add-book [0m
+
+[0;33m 7 - URL: http://localhost:8080/library/book/stock/id-book?id= [0m
+
+[0;33m 8 - URL: http://localhost:8080/library/stock/update [0m
+
+[0;33m 9 - URL: http://localhost:8080/library/topic/all [0m
+
+[0;33m 10 - URL: http://localhost:8080/library/topic?name= [0m
+
+[0;33m 11 - URL: http://localhost:8080/library/topic/add-topic [0m
+
+[0;33m 12 - URL: http://localhost:8080/library/publisher?id= [0m
+
+[0;33m 13 - URL: http://localhost:8080/library/publisher/all [0m
+
+[0;33m 14 - URL: http://localhost:8080/library/publisher/add-publisher [0m
+
+[0;33m 15 - URL: http://localhost:8080/library/publisher/update [0m
+
+[0;33m 16 - URL: http://localhost:8080/library/author?id= [0m
+
+[0;33m 17 - URL: http://localhost:8080/library/author/by-name?name= [0m
+
+[0;33m 18 - URL: http://localhost:8080/library/add-author [0m
+
+[0;33m 19 - URL: http://localhost:8080/library/author/all [0m
+
+[0;33m 20 - URL: http://localhost:8080/library/topic/by-id?id= [0m
+
+[0;33m 21 - URL: http://localhost:8080/library/stock/all [0m
+
+[0;33m 22 - URL:  [0m
+
+STARTING CURL's execution
+Testing only READ methods
+
+All books
+[{"id":1,"isbn":"9789877670233","bookName":"La Tregua","publishYear":2019,"price":500.0,"description":"Montevideo en 1957, gris, trabajo de oficina rutinario, jubilación como próximo paso. Tres hijos adultos, viudo hace tiempo, frustración, tristeza, falta de perspectivas. Súbitamente una mujer, un amor inesperado y urgente, oculto, difícil, un fugaz respiro de vida, una tregua entre soledades.","pages":224,"author":{"id":3,"authorName":"Mario","authorLastName":"Benedetti"},"publisher":{"id":2,"publisherName":"Sudamericana","address":"Adress 2222","country":"Brasil"},"topic":{"id":3,"topic_name":"Narración"},"stock":{"id":1,"stock_book":100}},{"id":2,"isbn":"978-84-96580-20-6","bookName":"El Extranjero","publishYear":1942,"price":800.0,"description":"Extranjero en su tierra, extranjero de sí mismo, Meursault vive una angustiosa situación. Íntimamente ajeno al alcance moral de sus actos, llega a asesinar, a la prisión, al patíbulo, y no hay para él, en este inevitable proceso, ni rebeldía ni esperanza. En estas páginas magistrales, el realismo logra la perfección: Meursault nos refiere su historia, no la de sus razones y sentimientos, sino la de su imposible destino. ","pages":200,"author":{"id":1,"authorName":"Albert","authorLastName":"Camus"},"publisher":{"id":1,"publisherName":"Alianza Editorial","address":"Adress 1111","country":"España"},"topic":{"id":3,"topic_name":"Narración"},"stock":{"id":2,"stock_book":250}}]
+All topics
+[{"id":1,"topic_name":"Drama"},{"id":2,"topic_name":"Teatro"},{"id":3,"topic_name":"Narración"},{"id":4,"topic_name":"FIlosofía"}]
+All stocks
+[{"id":1,"stock_book":100},{"id":2,"stock_book":250}]
+All publishers
+[{"id":1,"publisherName":"Alianza Editorial","address":"Adress 1111","country":"España"},{"id":2,"publisherName":"Sudamericana","address":"Adress 2222","country":"Brasil"}]
+All authors
+[{"id":1,"authorName":"Albert","authorLastName":"Camus"},{"id":2,"authorName":"Jose","authorLastName":"Saramago"},{"id":3,"authorName":"Mario","authorLastName":"Benedetti"}]
+##############################################################################
+
+Get entities by QueryParam
+
+Get Book by ID
+
+Get Book by name
+{"timestamp":"2021-01-19T19:30:32.169+00:00","status":404,"error":"Not Found","message":"","path":"/library/book/name"}
+Get ALL books
+
+Get Books by category
+
+Get Books by authors name
+
+Get books by author ID
+
+Get Stock by Book ID
+{"stock":"100"}
+Get Topic by ID
+{"id":1,"topic_name":"Drama"}
+Get topic by name
+{"id":1,"topic_name":"Drama"}
+Get PUBLISHER by ID
+{"id":1,"publisherName":"Alianza Editorial","address":"Adress 1111","country":"España"}
+Get Author by ID
+{"id":1,"authorName":"Albert","authorLastName":"Camus"}
+Get Author by NAME
+[{"id":1,"authorName":"Albert","authorLastName":"Camus"}]
