@@ -94,6 +94,7 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 	}
 
+	@Transactional
 	@Override
 	public Book addNewBook(Book bookNew) {
 		return bookRepository.save(bookNew);
@@ -138,7 +139,7 @@ public class LibraryServiceImpl implements LibraryService {
 		if (!allTopics.isEmpty()) {
 			return allTopics;
 		} else {
-			return null; // Controller should interpret as NullPOinter
+			return null;
 		}
 	}
 	
@@ -191,7 +192,7 @@ public class LibraryServiceImpl implements LibraryService {
 			stockRepo.save(stockFound.get());
 			return true;
 		} else {
-			return null; // stock not found
+			return false; // stock not found
 		}
 
 	}
@@ -276,10 +277,13 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 	}
 
+	@Transactional
+	@Override
 	public Author addNewAuthor(Author authorNew) {
 		return authorRepo.save(authorNew);
 	}
 
+	@Transactional
 	@Override
 	public Author updateAuthor(Integer authorId, Author authorData) {
 		Optional<Author> authorRetrieved = authorRepo.findOneAuthorById(authorId);
