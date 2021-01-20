@@ -23,13 +23,15 @@ public class Publisher implements Serializable {
 	@Column(name = "id_publisher")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	@NotNull
 	@Column(name = "publisher_name")
 	private String publisherName;
+
 	@NotNull
 	@Column(name = "address")
 	private String address;
+
 	@NotNull
 	@Column(name = "country")
 	private String country;
@@ -79,10 +81,11 @@ public class Publisher implements Serializable {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	
+
 	@Override
 	public String toString() {
-		String StrPublisherToString = "Publisher: "+ this.id +" "+this.publisherName+" "+this.address +" "+ this.country;
+		String StrPublisherToString = "Publisher: " + this.id + " " + this.publisherName + " " + this.address + " "
+				+ this.country;
 		return StrPublisherToString;
 	}
 

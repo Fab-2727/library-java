@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Author")
@@ -22,9 +23,12 @@ public class Author implements Serializable {
 	@Column(name = "id_author")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
+	@NotNull
 	@Column(name = "author_name")
 	private String authorName;
+
+	@NotNull
 	@Column(name = "author_lastname")
 	private String authorLastName;
 

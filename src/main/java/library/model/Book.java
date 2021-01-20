@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Book")
@@ -25,41 +26,51 @@ public class Book implements Serializable {
 	@Column(name = "id_book")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
+	@NotNull
 	private String isbn;
-	
+
+	@NotNull
 	@Column(name = "book_name")
 	private String bookName;
+
+	@NotNull
 	@Column(name = "publish_year")
 	private int publishYear;
+
+	@NotNull
 	@Column(name = "book_price")
 	private float price;
+
+	@NotNull
 	private String description;
+
+	@NotNull
 	private int pages;
 
 	// Declaration of relationships
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_author", nullable = false, updatable = true)
 	private Author author;
-	
+
 	@ManyToOne(optional = false)
-	@JoinColumn(name="id_publisher", nullable = false, updatable = true)
+	@JoinColumn(name = "id_publisher", nullable = false, updatable = true)
 	private Publisher publisher;
-	
+
 	// ManyToOne relationship, many book -> one topic
-    @ManyToOne(optional=false) 
-    @JoinColumn(name="id_topic", nullable=false, updatable=true)
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_topic", nullable = false, updatable = true)
 	private Topic topic;
 
 	@OneToOne(optional = false, mappedBy = "book")
 	private Stock stock;
-	
+
 	// how to make a foreign key primary key in another table
-	// or use a primary key 
-	
+	// or use a primary key
+
 	// It's missing the relationshipt between book and the STOCK of it
-	
+
 	public Book() {
 	}
 
