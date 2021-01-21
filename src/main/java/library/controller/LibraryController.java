@@ -2,10 +2,13 @@ package library.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import library.exception.ApiError;
-import library.exception.NotFoundException;
 import library.model.Author;
 import library.model.Book;
 import library.model.Publisher;
@@ -230,8 +232,10 @@ public class LibraryController {
 		if (publisherRetrieved != null) {
 			return ResponseEntity.status(successfulHttpCode).body(publisherRetrieved);
 		} else {
-			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode), notFoundHttpCode,
-					"Couldn't find any publisher by the id: " + idPublisher), HttpStatus.valueOf(notFoundHttpCode));
+			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+					, notFoundHttpCode
+					, "Couldn't find any publisher by the id: " + idPublisher)
+					, HttpStatus.valueOf(notFoundHttpCode));
 		}
 	}
 
@@ -322,7 +326,7 @@ public class LibraryController {
 		}
 	}
 
-	@PostMapping(path = "author/update", consumes = "application/json", produces = "application/json")
+	@PutMapping(path = "author/update", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> updateAuthor(@Valid @NonNull @RequestBody Author authorData) {
 		try {
 			libraryService.updateAuthor(authorData.getId(), authorData);
@@ -344,7 +348,64 @@ public class LibraryController {
 					, "Couldn't retrieve any Author from the database")
 					, HttpStatus.valueOf(notFoundHttpCode));
 		}
+	}
+	
+	@PutMapping(path = "test/update-author", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Object> updatePublisherTest(@NonNull @RequestBody String pubToUpdateData ) throws IllegalArgumentException {
+		try {
+			
+			JSONObject publisherToUpdateData = new JSONObject(pubToUpdateData);
+			// System.out.println("JSON Parsed: "+ publisherToUpdateData);
+			if ( publisherToUpdateData == null || publisherToUpdateData.toString() == "" ) {
+				System.out.println("Invalid payload, cannnot be empty");
+			} 
 
+			// Common validations
+			int publisherId = 0;
+			if ( publisherToUpdateData.has("id_publisher") && ! publisherToUpdateData.isNull("id_publisher") ) {
+				publisherId = publisherToUpdateData.getInt("id_publisher");
+			} else {
+				System.out.println("Invalid payload, missing 'id_publisher' key");
+				
+			}
+			String publisherName = "";
+			if ( publisherToUpdateData.has("publisher_name") && ! publisherToUpdateData.isNull("publisher_name") ) {
+				publisherName = publisherToUpdateData.getString("publisher_name");
+			} else {
+				System.out.println("Invalid payload, missing 'publisher_name' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publisher_name' key");
+			}
+			String publisherAddress = "";
+			if ( publisherToUpdateData.has("address") && ! publisherToUpdateData.isNull("address") ) {
+				publisherName = publisherToUpdateData.getString("address");
+			} else {
+				System.out.println("Invalid payload, missing 'address' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'address' key");
+			}
+			String publisherCountry = "";
+			if ( publisherToUpdateData.has("country") && ! publisherToUpdateData.isNull("country") ) {
+				publisherName = publisherToUpdateData.getString("country");
+			} else {
+				System.out.println("Invalid payload, missing 'country' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'country' key");
+			}
+			
+			
+			boolean rspService = libraryService.updatePubTest(publisherId, publisherToUpdateData);
+			
+			if (rspService) {
+				return ResponseEntity.status(createdHttpCode).body("Created");
+			} else {
+				return ResponseEntity.status(serverErrorHttpCode)
+						.body(" {\"response\":\"Couldn't update the publisher of ID: "+publisherToUpdateData.getInt("id_publisher")+"\"}");
+			}
+			
+		} catch (JSONException ex) {
+			System.out.println("Invalid message format, it must be JSON");
+			System.out.println(ex);
+		} 
+		return null;
+		
 	}
 
 }

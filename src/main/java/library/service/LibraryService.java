@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import library.model.Author;
 import library.model.Book;
 import library.model.Publisher;
@@ -48,5 +51,9 @@ public interface LibraryService {
 	public List<Author> getAuthorsByName(String authorName);
 	public Author addNewAuthor(Author authorNew);
 	public Author updateAuthor(Integer authorId, Author authorData);
+	
+	// test methods
+	
+	public boolean updatePubTest(Integer publisherId, JSONObject json) throws JSONException;
 	
 }

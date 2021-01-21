@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +20,6 @@ import library.repository.BookRepository;
 import library.repository.PublisherRepository;
 import library.repository.StockRepository;
 import library.repository.TopicRepository;
-
 
 @Service
 public class LibraryServiceImpl implements LibraryService {
@@ -250,6 +251,29 @@ public class LibraryServiceImpl implements LibraryService {
 			return null;
 		}
 	}
+	
+	//@Commit
+	@Transactional
+	@Override
+	public boolean updatePubTest(Integer pubId, JSONObject jsonData) throws JSONException {
+		if (publisherRepo.existsById(pubId)) {
+			Publisher pubToUpdate = publisherRepo.findOnePublisherById(pubId).get();
+			//System.out.println("Before new values: "+ pubToUpdate);
+			if ( jsonData.has("publisher_name") && !(jsonData.getString("publisher_name") == "") ) 
+				pubToUpdate.setPublisherName(jsonData.getString("publisher_name"));
+			if ( jsonData.has("address") && !(jsonData.getString("address") == "") ) 
+				pubToUpdate.setAddress(jsonData.getString("address"));
+			if ( jsonData.has("country") && !(jsonData.getString("country") == "") ) 
+				pubToUpdate.setCountry(jsonData.getString("country"));
+			//System.out.println("With new values: "+ pubToUpdate.toString());
+			publisherRepo.save(pubToUpdate);
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
 
 	public Boolean publisherExists(Integer idPublisher) {
 		return publisherRepo.existsById(idPublisher);
