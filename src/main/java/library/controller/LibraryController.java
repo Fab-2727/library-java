@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+//import library.exception.ApiError;
 import library.exception.ApiError;
 import library.model.Author;
 import library.model.Book;
@@ -267,19 +268,55 @@ public class LibraryController {
 	}
 
 	@PutMapping(path = "/publisher/update", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<String> updatePublisher(@Valid @NonNull @RequestBody Publisher dataNewPublisher) {
-		// change logic in try-catch
+	public ResponseEntity<Object> updatePublisher(@NonNull @RequestBody String pubToUpdateData ) throws IllegalArgumentException {
 		try {
-			libraryService.updatePublisherData(dataNewPublisher.getId(), dataNewPublisher);
-			return ResponseEntity.status(successfulHttpCode).body("{\"response\":\"Publisher Created\"}");
-		} catch (Exception e) {
-			System.out.println(e);
-			return ResponseEntity.status(serverErrorHttpCode)
-					.body(" {\"response\":\"Couldn't update the publisher of ID: "+dataNewPublisher.getId()+" and name "+dataNewPublisher.getPublisherName()+"\""
-							+ ",{\"Cause\":\"" + e + "\"\"}}");
-		}
-	}
+			
+			JSONObject publisherToUpdateData = new JSONObject(pubToUpdateData);
+			
+			if ( publisherToUpdateData == null || publisherToUpdateData.toString() == "" ) {
+				System.out.println("Invalid payload, cannot be empty");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, cannot be empty");
+			} 
 
+			// Common validations
+			int publisherId = 0;
+			if ( ! publisherToUpdateData.has("id_publisher") || publisherToUpdateData.isNull("id_publisher") || publisherToUpdateData.getInt("id_publisher") == 0 ) {
+				System.out.println("Invalid payload, missing 'id_publisher' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_publisher' key");
+			}
+			publisherId = publisherToUpdateData.getInt("id_publisher");
+			
+			if ( ! publisherToUpdateData.has("publisher_name") || publisherToUpdateData.isNull("publisher_name") ) {
+				System.out.println("Invalid payload, missing 'publisher_name' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publisher_name' key");
+			}
+			
+			if ( ! publisherToUpdateData.has("address") || publisherToUpdateData.isNull("address") ) {
+				System.out.println("Invalid payload, missing 'address' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'address' key");
+			}
+
+			if ( ! publisherToUpdateData.has("country") || publisherToUpdateData.isNull("country") ) {
+				System.out.println("Invalid payload, missing 'country' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'country' key");
+			}
+			
+			boolean rspService = libraryService.updatePublisherData(publisherId, publisherToUpdateData);
+			
+			if (rspService) {
+				return ResponseEntity.status(createdHttpCode).body("Created");
+			} else {
+				return ResponseEntity.status(serverErrorHttpCode)
+						.body(" {\"response\":\"Couldn't update the publisher of ID: "+publisherToUpdateData.getInt("id_publisher")+"\"}");
+			}
+			
+		} catch (JSONException ex) {
+			System.out.println("Invalid message format, it must be JSON");
+			System.out.println(ex);
+			return null;
+		} 
+	}
+	
 	// End of 'Publisher' entity controller methods
 
 	// ------------------------------------------------- //
@@ -350,62 +387,6 @@ public class LibraryController {
 		}
 	}
 	
-	@PutMapping(path = "test/update-author", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Object> updatePublisherTest(@NonNull @RequestBody String pubToUpdateData ) throws IllegalArgumentException {
-		try {
-			
-			JSONObject publisherToUpdateData = new JSONObject(pubToUpdateData);
-			// System.out.println("JSON Parsed: "+ publisherToUpdateData);
-			if ( publisherToUpdateData == null || publisherToUpdateData.toString() == "" ) {
-				System.out.println("Invalid payload, cannnot be empty");
-			} 
 
-			// Common validations
-			int publisherId = 0;
-			if ( publisherToUpdateData.has("id_publisher") && ! publisherToUpdateData.isNull("id_publisher") ) {
-				publisherId = publisherToUpdateData.getInt("id_publisher");
-			} else {
-				System.out.println("Invalid payload, missing 'id_publisher' key");
-				
-			}
-			String publisherName = "";
-			if ( publisherToUpdateData.has("publisher_name") && ! publisherToUpdateData.isNull("publisher_name") ) {
-				publisherName = publisherToUpdateData.getString("publisher_name");
-			} else {
-				System.out.println("Invalid payload, missing 'publisher_name' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publisher_name' key");
-			}
-			String publisherAddress = "";
-			if ( publisherToUpdateData.has("address") && ! publisherToUpdateData.isNull("address") ) {
-				publisherName = publisherToUpdateData.getString("address");
-			} else {
-				System.out.println("Invalid payload, missing 'address' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'address' key");
-			}
-			String publisherCountry = "";
-			if ( publisherToUpdateData.has("country") && ! publisherToUpdateData.isNull("country") ) {
-				publisherName = publisherToUpdateData.getString("country");
-			} else {
-				System.out.println("Invalid payload, missing 'country' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'country' key");
-			}
-			
-			
-			boolean rspService = libraryService.updatePubTest(publisherId, publisherToUpdateData);
-			
-			if (rspService) {
-				return ResponseEntity.status(createdHttpCode).body("Created");
-			} else {
-				return ResponseEntity.status(serverErrorHttpCode)
-						.body(" {\"response\":\"Couldn't update the publisher of ID: "+publisherToUpdateData.getInt("id_publisher")+"\"}");
-			}
-			
-		} catch (JSONException ex) {
-			System.out.println("Invalid message format, it must be JSON");
-			System.out.println(ex);
-		} 
-		return null;
-		
-	}
 
 }

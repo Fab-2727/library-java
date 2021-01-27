@@ -43,7 +43,8 @@ public interface LibraryService {
 	public Publisher getPublisherById(Integer publisherId);
 	public Boolean publisherExists(Integer publisherId);
 	public void addNewPublisher(Publisher publisherNew);
-	public Publisher updatePublisherData(Integer publisherId, Publisher publisherData);
+	public boolean updatePublisherData(Integer publisherId, JSONObject publisherData) throws JSONException;
+	public Boolean deletePublisherById(Integer publisherId);
 	
 	// Author table
 	public List<Author> getAllAuthors();
@@ -53,7 +54,5 @@ public interface LibraryService {
 	public Author updateAuthor(Integer authorId, Author authorData);
 	
 	// test methods
-	
-	public boolean updatePubTest(Integer publisherId, JSONObject json) throws JSONException;
 	
 }

@@ -240,24 +240,23 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Transactional
 	@Override
-	public Publisher updatePublisherData(Integer publisherId, Publisher publisherData) {
-		if (publisherExists(publisherId)) {
-			Publisher publisherToUpdate = publisherRepo.findOnePublisherById(publisherId).get();
-			publisherToUpdate.setPublisherName(publisherData.getPublisherName());
-			publisherToUpdate.setAddress(publisherData.getAddress());
-			publisherToUpdate.setCountry(publisherData.getCountry());
-			return publisherRepo.save(publisherToUpdate);
+	public Boolean deletePublisherById(Integer publisherId) {
+		if (publisherRepo.existsById(publisherId)) {
+			// About to delete publisher
+			publisherRepo.deleteById(publisherId);
+			//Publisher deleted
+			return true;
 		} else {
-			return null;
+			return false;		// Controller should interpret 'false' as the entity with the given ID doesn't exists.
 		}
 	}
 	
 	//@Commit
 	@Transactional
 	@Override
-	public boolean updatePubTest(Integer pubId, JSONObject jsonData) throws JSONException {
-		if (publisherRepo.existsById(pubId)) {
-			Publisher pubToUpdate = publisherRepo.findOnePublisherById(pubId).get();
+	public boolean updatePublisherData(Integer publisherId, JSONObject jsonData) throws JSONException {
+		if (publisherRepo.existsById(publisherId)) {
+			Publisher pubToUpdate = publisherRepo.findOnePublisherById(publisherId).get();
 			//System.out.println("Before new values: "+ pubToUpdate);
 			if ( jsonData.has("publisher_name") && !(jsonData.getString("publisher_name") == "") ) 
 				pubToUpdate.setPublisherName(jsonData.getString("publisher_name"));
