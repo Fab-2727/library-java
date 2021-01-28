@@ -35,7 +35,7 @@ public interface LibraryService {
 
 	// Stock table
 	public List<Stock> getAllStocks();
-	public Boolean updateStock(Integer bookId, Integer stockBook);
+	public Stock updateStock(Integer bookId, Integer stockBook);
 	public Integer getStockByBookId(Integer bookId);
 
 	// Publisher table
@@ -51,7 +51,7 @@ public interface LibraryService {
 	public Author getAuthorById(Integer authorId);
 	public List<Author> getAuthorsByName(String authorName);
 	public Author addNewAuthor(Author authorNew);
-	public Author updateAuthor(Integer authorId, Author authorData);
+	public boolean updateAuthor(Integer authorId, JSONObject authorData) throws JSONException;
 	
 	// test methods
 	

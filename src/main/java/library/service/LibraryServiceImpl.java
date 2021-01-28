@@ -185,17 +185,17 @@ public class LibraryServiceImpl implements LibraryService {
 	
 	@Transactional
 	@Override
-	public Boolean updateStock(Integer bookId, Integer stockBook) {
+	public Stock updateStock(Integer bookId, Integer stockBook) {
 		// check for possibles ERRORS and Exceptions
 		Optional<Stock> stockFound = stockRepo.findByIdBook(bookId);
 		if (stockFound.isPresent()) {
-			stockFound.get().setStock_book(stockBook);
-			stockRepo.save(stockFound.get());
-			return true;
+			Stock stockToUpdate = stockFound.get();
+			stockToUpdate.setStock_book(stockBook);
+			
+			return stockRepo.save(stockFound.get());
 		} else {
-			return false; // stock not found
+			return null; // stock not found
 		}
-
 	}
 
 	@Override
@@ -308,15 +308,18 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Transactional
 	@Override
-	public Author updateAuthor(Integer authorId, Author authorData) {
+	public boolean updateAuthor(Integer authorId, JSONObject authorData) throws JSONException {
 		Optional<Author> authorRetrieved = authorRepo.findOneAuthorById(authorId);
+		
 		if (authorRetrieved.isPresent()) {
-			Author authorFound = authorRetrieved.get();
-			authorFound.setAuthorName(authorData.getAuthorName());
-			authorFound.setAuthorLastName(authorData.getAuthorLastName());
-			return authorRepo.save(authorFound);
+			Author authorToUpdate = authorRetrieved.get();
+			if ( authorData.has("author_name") && !(authorData.getString("author_name") == "") ) 
+				authorToUpdate.setAuthorName(authorData.getString("author_name"));
+				
+			authorRepo.save(authorToUpdate);
+			return true;
 		} else {
-			return null;
+			return false;
 		}
 	}
 	
