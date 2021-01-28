@@ -28,10 +28,6 @@ public class Author implements Serializable {
 	@Column(name = "author_name")
 	private String authorName;
 
-	@NotNull
-	@Column(name = "author_lastname")
-	private String authorLastName;
-
 	// Declaration of relationships
 	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Book> books;
@@ -39,10 +35,9 @@ public class Author implements Serializable {
 	public Author() {
 	}
 
-	public Author(String authorName, String authorLastName) {
+	public Author(String authorName) {
 		super();
 		this.authorName = authorName;
-		this.authorLastName = authorLastName;
 	}
 
 	public int getId() {
@@ -59,14 +54,6 @@ public class Author implements Serializable {
 
 	public void setAuthorName(String authorName) {
 		this.authorName = authorName;
-	}
-
-	public String getAuthorLastName() {
-		return authorLastName;
-	}
-
-	public void setAuthorLastName(String authorLastName) {
-		this.authorLastName = authorLastName;
 	}
 
 }
