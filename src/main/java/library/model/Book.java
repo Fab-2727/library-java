@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -42,10 +43,8 @@ public class Book implements Serializable {
 	@Column(name = "book_price")
 	private float price;
 
-	@NotNull
 	private String description;
 
-	@NotNull
 	private int pages;
 
 	// Declaration of relationships
@@ -63,6 +62,7 @@ public class Book implements Serializable {
 	@JoinColumn(name = "id_topic", nullable = false, updatable = true)
 	private Topic topic;
 
+	@Transient
 	@OneToOne(optional = false, mappedBy = "book")
 	private Stock stock;
 
@@ -82,6 +82,22 @@ public class Book implements Serializable {
 		this.price = price;
 		this.description = description;
 		this.pages = pages;
+	}
+	
+
+	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull int publishYear, @NotNull float price,
+			String description, int pages, Author author, Publisher publisher, Topic topic, Stock stock) {
+		super();
+		this.isbn = isbn;
+		this.bookName = bookName;
+		this.publishYear = publishYear;
+		this.price = price;
+		this.description = description;
+		this.pages = pages;
+		this.author = author;
+		this.publisher = publisher;
+		this.topic = topic;
+		this.stock = stock;
 	}
 
 	public int getId() {
@@ -170,6 +186,11 @@ public class Book implements Serializable {
 
 	public void setStock(Stock stock) {
 		this.stock = stock;
+	}
+	
+	@Override
+	public String toString() {
+		return "Book data: "+bookName+" "+isbn+" "+publishYear+" "+price;
 	}
 
 }
