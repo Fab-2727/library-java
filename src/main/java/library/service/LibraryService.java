@@ -1,8 +1,6 @@
 package library.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,13 +16,13 @@ public interface LibraryService {
 	// 13/01/2021	=> none DELETE method, implement later for all entities
 	// BOOK table
 	public List<Book> getAllBooks();
-	public Optional<Book> getBookByID(Integer id);
+	public Book getBookById(Integer id);
 	// This method can return 1 or n books, because of the use of LIKE in the query
 	public List<Book> getBooksByName(String bookName);
-	public ArrayList<Book> getBooksByCategory(String category);
-	public ArrayList<Book> getBooksByAuthorName(String authorName);
-	public ArrayList<Book> getBooksByAuthorId(Integer authorId);
-	public Book addNewBook(Book bookNew);
+	public List<Book> getBooksByCategory(String category);
+	public List<Book> getBooksByAuthorName(String authorName);
+	public List<Book> getBooksByAuthorId(Integer authorId);
+	public boolean addNewBook(JSONObject dataNewBook) throws JSONException;
 	public Book updateBookInfo(Integer bookId, Book bookData);
 	
 	// Topic table

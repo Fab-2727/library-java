@@ -37,8 +37,14 @@ public class LibraryServiceImpl implements LibraryService {
 
 	// BOOK methods IMPLEMENTATION
 	@Override
-	public Optional<Book> getBookByID(Integer id) {
-		return bookRepository.findOneBookById(id);
+	public Book getBookById(Integer id) {
+		Optional<Book> bookRetrieved = bookRepository.findOneBookById(id);
+		if (bookRetrieved.isPresent()) {
+			return bookRetrieved.get();
+		} else {
+			return null;
+		}
+		
 	}
 	
 	@Override
@@ -53,43 +59,50 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	public List<Book> getBooksByName(String bookName) {
-		// test if it works
-		List<Book> similarBookByName = bookRepository.findByBookName(bookName);
-		return similarBookByName;
+		List<Book> booksByName = bookRepository.findByBookName(bookName);
+		if (! booksByName.isEmpty()) {
+			return booksByName;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public ArrayList<Book> getBooksByCategory(String category) {
-		Optional<Topic> catFound = topicRepo.findByTopicName(category);
+	public List<Book> getBooksByCategory(String category) {
+		Optional<Topic> catFound = topicRepo.findByTopicName(category); //each topic name should be unique in the database
 
 		if (catFound.isPresent()) {
 			List<Book> booksByCat = bookRepository.findByIdTopic(catFound.get().getId());
-			return (ArrayList<Book>) booksByCat;
+			return booksByCat;
 		} else {
-			return null; // Controller should interpret 'null' as topic doesn't exists
+			return null; // Controller should interpret 'null' as topic doesn't exists or that none book has been retrieved
 		}
 
 	}
 
 	@Override
-	public ArrayList<Book> getBooksByAuthorName(String authorName) {
-
+	public List<Book> getBooksByAuthorName(String authorName) {
+		Integer idAuthor = 0;
+		List<Book> booksByAuthorName = new ArrayList<>();
 		List<Author> authorsFound = authorRepo.findByAuthorName(authorName);
-
+		
 		if (! authorsFound.isEmpty()) {
-			// for testing purposes, only the first author
-			List<Book> booksByAuthor = bookRepository.findByIdAuthor(authorsFound.get(0).getId());
-			return (ArrayList<Book>) booksByAuthor;
+			for (Author author : authorsFound) {
+				idAuthor =  author.getId();
+				booksByAuthorName.addAll(bookRepository.findByIdAuthor(idAuthor));
+			}
+			
+			return booksByAuthorName;
 		} else {
-			return null; // Controller should interpret 'null' as author don't exists
+			return null;
 		}
 	}
 
 	@Override
-	public ArrayList<Book> getBooksByAuthorId(Integer authorId) {
+	public List<Book> getBooksByAuthorId(Integer authorId) {
 		List<Book> booksFound = bookRepository.findByIdAuthor(authorId);
 		if (!booksFound.isEmpty()) {
-			return (ArrayList<Book>) booksFound;
+			return booksFound;
 		} else {
 			return null; // Controller should interpret 'null' as author don't exists
 		}
@@ -97,9 +110,45 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Transactional
 	@Override
-	public Book addNewBook(Book bookNew) {
-		return bookRepository.save(bookNew);
+	public boolean addNewBook (JSONObject dataNewBook) throws JSONException {
+
+		// 'description' and 'pages' are the only properties to validate here.
+		String isbn = dataNewBook.getString("isbn");
+		String bookName = dataNewBook.getString("book_name");
+		Integer publishYear = dataNewBook.getInt("publish_year");
+		Float book_price = (Float) dataNewBook.get("book_price");
+		
+		// Validations over 'description' and 'pages'.
+		String description = (dataNewBook.has("description") && !dataNewBook.getString("description").trim().isEmpty()) ? dataNewBook.getString("description") : "";
+		Integer pages = dataNewBook.has("pages") ? dataNewBook.getInt("pages") : 0;
+		
+		Integer idAuthor = dataNewBook.getInt("id_author");
+		Integer idTopic = dataNewBook.getInt("id_topic");
+		Integer idPublisher = dataNewBook.getInt("id_publisher");
+		
+		// Get entities:
+		Optional<Author> authorRetrieve = authorRepo.findOneAuthorById(idAuthor);
+		Optional<Topic> topicRetrieve = topicRepo.findOneTopicById(idTopic);
+		Optional<Publisher> publisherRetrieve = publisherRepo.findOnePublisherById(idPublisher);
+		
+		if (authorRetrieve.isEmpty() ) {
+			throw new JSONException("None Author found by id: " + idAuthor);
+		}
+		if (topicRetrieve.isEmpty()) {
+			throw new JSONException("None Topic found by id: " + idTopic);
+		}
+		if (publisherRetrieve.isEmpty()) {
+			throw  new JSONException("None Publisher found by id: " + idPublisher);
+		}
+		
+		Book bookToPersist = new Book(isbn, bookName, publishYear, book_price, description, pages, authorRetrieve.get(), publisherRetrieve.get(), topicRetrieve.get());
+		
+		bookRepository.saveAndFlush(bookToPersist);
+		
+		return true;
+		
 	}
+	
 	
 	@Transactional
 	@Override

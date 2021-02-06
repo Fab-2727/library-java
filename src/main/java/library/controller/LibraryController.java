@@ -1,9 +1,6 @@
 package library.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -21,17 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
-//import library.exception.ApiError;
 import library.exception.ApiError;
 import library.model.Author;
 import library.model.Book;
 import library.model.Publisher;
 import library.model.Stock;
 import library.model.Topic;
-import library.repository.PublisherRepository;
-import library.repository.TopicRepository;
 import library.service.LibraryServiceImpl;
 
 @RestController
@@ -42,15 +35,15 @@ public class LibraryController {
 	private LibraryServiceImpl libraryService;
 
 	@Value("${server.success.httpstatus}")
-	private int successfulHttpCode;
+	private static int successfulHttpCode;
 	@Value("${server.created.httpstatus}")
-	private int createdHttpCode;
+	private static int createdHttpCode;
 	@Value("${server.badrequest.httpstatus}")
-	private int badRequestHttpCode;
+	private static int badRequestHttpCode;
 	@Value("${server.not.found.httpstatus}")
-	private int notFoundHttpCode;
+	private static int notFoundHttpCode;
 	@Value("${server.error.httpstatus}")
-	private int serverErrorHttpCode;
+	private static int serverErrorHttpCode;
 
 	@GetMapping(path = "/index")
 	public String index() {
@@ -60,16 +53,31 @@ public class LibraryController {
 	// Start of 'Book' entity controller methods
 
 	@GetMapping(path = "/book", produces = "application/json")
-	public void getBookById(@NonNull @RequestParam("id") Integer idBook) {
-		// Optional<Book>
-		return;
+	public ResponseEntity<Object> getBookById(@NonNull @RequestParam("id") Integer idBook) {
+		Book bookFound = libraryService.getBookById(idBook);
+		if (bookFound != null) {
+			return ResponseEntity.status(successfulHttpCode).body(bookFound);
+		} else {
+			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+					, notFoundHttpCode
+					, "Couldn't find any book by the id: " + idBook)
+					, HttpStatus.valueOf(notFoundHttpCode));
+		}
 	}
 
 	@GetMapping(path = " /book/name", produces = "application/json")
-	public void getBooksByName(@NonNull @RequestParam("name-book") String nameBook) {
-		System.out.println("Name received: " + nameBook);
-		return;
-		// return ArrayList;
+	public ResponseEntity<Object> getBooksByName(@NonNull @RequestParam("name-book") String nameBook) {
+		List<Book> booksFound = libraryService.getBooksByName(nameBook);
+		
+		if (booksFound != null && !booksFound.isEmpty()) {
+			return ResponseEntity.status(successfulHttpCode).body(booksFound);
+		} else {
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+							, notFoundHttpCode
+							, "Couldn't retrieve any Book from the database by the name: " +nameBook),
+					HttpStatus.valueOf(notFoundHttpCode));
+		}
 	}
 
 	@GetMapping(path = "/book/all", produces = "application/json")
@@ -87,23 +95,139 @@ public class LibraryController {
 	}
 
 	@GetMapping(path = "/book/category", produces = "application/json")
-	public void getBooksByCategory(@NonNull @RequestParam("book-category") String bookCategory) {
-		return; // ArrayList
+	public ResponseEntity<Object> getBooksByCategory(@NonNull @RequestParam("book-category") String bookCategory) {
+		List<Book> booksFoundByCat = libraryService.getBooksByCategory(bookCategory);
+		
+		if (booksFoundByCat != null && !booksFoundByCat.isEmpty()) {
+			return ResponseEntity.status(successfulHttpCode).body(booksFoundByCat);
+		} else {
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+							, notFoundHttpCode
+							, "Couldn't find any book that has the category: " +bookCategory),
+					HttpStatus.valueOf(notFoundHttpCode));
+		}
+		
 	}
-
+	
+	// cannot be implemented yet
 	@GetMapping(path = "/book/author", produces = "application/json")
-	public void getBooksByAuthorName(@NonNull @RequestParam("name") String nameAuthor) {
-		System.out.println("Name received: " + nameAuthor);
-		return;
+	public ResponseEntity<Object> getBooksByAuthorName(@NonNull @RequestParam("name") String nameAuthor) {
+		
+		List<Book> booksFoundByAuthorName =  libraryService.getBooksByAuthorName(nameAuthor);
+		
+		if (booksFoundByAuthorName != null && !booksFoundByAuthorName.isEmpty()) {
+			return ResponseEntity.status(successfulHttpCode).body(booksFoundByAuthorName);
+		} else {
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+							, notFoundHttpCode
+							, "Couldn't find any book whose author is '"+ nameAuthor+"'"),
+					HttpStatus.valueOf(notFoundHttpCode));
+		}
 	}
 
 	@GetMapping(path = "/book/author/id", produces = "application/json")
-	public void getBooksByIdAuthor(@NonNull @RequestParam("author-id") Integer idAuthor) {
-		return;
+	public ResponseEntity<Object> getBooksByIdAuthor(@NonNull @RequestParam("author-id") Integer idAuthor) {
+		List<Book> booksFoundByAuthorId = libraryService.getBooksByAuthorId(idAuthor);
+		
+		if (booksFoundByAuthorId != null && !booksFoundByAuthorId.isEmpty()) {
+			return ResponseEntity.status(successfulHttpCode).body(booksFoundByAuthorId);
+		} else {
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+							, notFoundHttpCode
+							, "Couldn't find any book which has an author id of: "+ idAuthor),
+					HttpStatus.valueOf(notFoundHttpCode));
+		}
+		
 	}
-
+	// not yet
 	@PostMapping(path = "/book/add-book", consumes = "application/json", produces = "application/json")
-	public void addNewBook(@Valid @NonNull @RequestBody Book book) {
+	public ResponseEntity<Object> addNewBook(@Valid @NonNull @RequestBody Book book) {
+		
+		System.out.println(book.toString());
+		
+		return ResponseEntity.status(successfulHttpCode).body(book);
+	}
+	
+	
+	// Implementation of add-book with String as JSONObject
+	
+	public ResponseEntity<Object> addNewBookFeature(@NonNull @RequestBody String JsonMessageBook) {
+		
+		try {
+			
+			JSONObject jsonNewBook = new JSONObject(JsonMessageBook);
+			
+			if ( jsonNewBook == null || jsonNewBook.toString() == "" ) {
+				System.out.println("Invalid payload, cannot be empty");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, cannot be empty");
+			}
+			
+			if ( ! jsonNewBook.has("isbn") || jsonNewBook.isNull("isbn") || jsonNewBook.getString("isbn").isEmpty() ) {
+				System.out.println("Invalid payload, missing 'isbn' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'isbn' key");
+			}
+			
+			if ( ! jsonNewBook.has("book_name") || jsonNewBook.isNull("book_name") || jsonNewBook.getString("book_name").isEmpty() ) {
+				System.out.println("Invalid payload, missing 'book_name' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'book_name' key");
+			}
+			
+			if ( ! jsonNewBook.has("publish_year") || jsonNewBook.isNull("publish_year") ) {
+				System.out.println("Invalid payload, missing 'publish_year' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publish_year' key");
+			}
+			
+			if ( ! jsonNewBook.has("book_price") || jsonNewBook.isNull("book_price") ) {
+				System.out.println("Invalid payload, missing 'book_price' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'book_price' key");
+			}
+			
+			/*
+			 * Description and Pages can be absent, be null or be empty. That's why there is no validations for those fields.
+			 * 
+			 * The JSON must have the ID's of the relationships entities.
+			 * If the entity with the given ID isn't found, then an exception should be trigger.
+			 * 
+			 */
+			
+			if ( ! jsonNewBook.has("id_author") || jsonNewBook.isNull("id_author") ) {
+				System.out.println("Invalid payload, missing 'id_author' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_author' key");
+			}
+			
+			if ( ! jsonNewBook.has("id_publisher") || jsonNewBook.isNull("id_publisher") ) {
+				System.out.println("Invalid payload, missing 'id_publisher' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_publisher' key");
+			}
+			
+			if ( ! jsonNewBook.has("id_topic") || jsonNewBook.isNull("id_topic") ) {
+				System.out.println("Invalid payload, missing 'id_topic' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_topic' key");
+			}
+			
+			// Trying to persist book to the database
+			try {
+				libraryService.addNewBook(jsonNewBook);
+				return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Book created\"}");
+			} catch (JSONException e) {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode), badRequestHttpCode,
+						e.getMessage()),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	@PutMapping(path = "/book/update", consumes = "application/json", produces = "application/json")
+	public void updateBook(@Valid @NonNull @RequestBody Book book) {
 		return;
 	}
 
