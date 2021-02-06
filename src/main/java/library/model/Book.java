@@ -37,15 +37,15 @@ public class Book implements Serializable {
 
 	@NotNull
 	@Column(name = "publish_year")
-	private int publishYear;
+	private Integer publishYear;
 
 	@NotNull
 	@Column(name = "book_price")
-	private float price;
+	private Float price;
 
 	private String description;
 
-	private int pages;
+	private Integer pages;
 
 	// Declaration of relationships
 
@@ -74,7 +74,7 @@ public class Book implements Serializable {
 	public Book() {
 	}
 
-	public Book(String isbn, String bookName, int publishYear, float price, String description, int pages) {
+	public Book(String isbn, String bookName, Integer publishYear, float price, String description, Integer pages) {
 		super();
 		this.isbn = isbn;
 		this.bookName = bookName;
@@ -85,8 +85,8 @@ public class Book implements Serializable {
 	}
 	
 
-	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull int publishYear, @NotNull float price,
-			String description, int pages, Author author, Publisher publisher, Topic topic, Stock stock) {
+	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull Integer publishYear, @NotNull Float price,
+			String description, Integer pages, Author author, Publisher publisher, Topic topic, Stock stock) {
 		super();
 		this.isbn = isbn;
 		this.bookName = bookName;
@@ -98,6 +98,21 @@ public class Book implements Serializable {
 		this.publisher = publisher;
 		this.topic = topic;
 		this.stock = stock;
+	}
+	
+
+	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull Integer publishYear, @NotNull Float price,
+			String description, Integer pages, Author author, Publisher publisher, Topic topic) {
+		super();
+		this.isbn = isbn;
+		this.bookName = bookName;
+		this.publishYear = publishYear;
+		this.price = price;
+		this.description = description;
+		this.pages = pages;
+		this.author = author;
+		this.publisher = publisher;
+		this.topic = topic;
 	}
 
 	public int getId() {
@@ -124,11 +139,11 @@ public class Book implements Serializable {
 		this.bookName = bookName;
 	}
 
-	public int getPublishYear() {
+	public Integer getPublishYear() {
 		return publishYear;
 	}
 
-	public void setPublishYear(int publishYear) {
+	public void setPublishYear(Integer publishYear) {
 		this.publishYear = publishYear;
 	}
 
@@ -148,11 +163,11 @@ public class Book implements Serializable {
 		this.description = description;
 	}
 
-	public int getPages() {
+	public Integer getPages() {
 		return pages;
 	}
 
-	public void setPages(int pages) {
+	public void setPages(Integer pages) {
 		this.pages = pages;
 	}
 
