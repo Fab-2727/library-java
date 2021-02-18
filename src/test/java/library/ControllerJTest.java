@@ -7,9 +7,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MvcResult;
 
-@TestPropertySource("classpath:application-test.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class ControllerJTest extends AbstractTest {
 
 	
@@ -23,8 +25,10 @@ class ControllerJTest extends AbstractTest {
 	@Test
 	public void getAllBooksTest() {
 		try {
-			mvc.perform(get("/library/book/all")).andReturn());
-
+			MvcResult rst = mvc.perform(get("/library/book/all")).andReturn();
+			System.out.println("STATUS: " + rst.getResponse().getStatus());
+			System.out.println("BODY: " + rst.getResponse().getContentAsString());
+			
 		} catch (Exception e) {
 			System.out.println("In try-catch TEST method");
 			e.printStackTrace();

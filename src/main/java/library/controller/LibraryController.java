@@ -35,15 +35,15 @@ public class LibraryController {
 	private LibraryServiceImpl libraryService;
 
 	@Value("${server.success.httpstatus}")
-	private static int successfulHttpCode;
+	private int successfulHttpCode;
 	@Value("${server.created.httpstatus}")
-	private static int createdHttpCode;
+	private int createdHttpCode;
 	@Value("${server.badrequest.httpstatus}")
-	private static int badRequestHttpCode;
+	private int badRequestHttpCode;
 	@Value("${server.not.found.httpstatus}")
-	private static int notFoundHttpCode;
+	private int notFoundHttpCode;
 	@Value("${server.error.httpstatus}")
-	private static int serverErrorHttpCode;
+	private int serverErrorHttpCode;
 
 	@GetMapping(path = "/index")
 	public String index() {
