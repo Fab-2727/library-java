@@ -119,7 +119,7 @@ public class LibraryServiceImpl implements LibraryService {
 		Float book_price = (Float) dataNewBook.get("book_price");
 		
 		// Validations over 'description' and 'pages'.
-		String description = (dataNewBook.has("description") && !dataNewBook.getString("description").trim().isEmpty()) ? dataNewBook.getString("description") : "";
+		String description = dataNewBook.has("description") ? dataNewBook.getString("description") : "";
 		Integer pages = dataNewBook.has("pages") ? dataNewBook.getInt("pages") : 0;
 		
 		Integer idAuthor = dataNewBook.getInt("id_author");
@@ -146,39 +146,58 @@ public class LibraryServiceImpl implements LibraryService {
 		bookRepository.saveAndFlush(bookToPersist);
 		
 		return true;
-		
 	}
 	
 	
 	@Transactional
 	@Override
-	public Book updateBookInfo(Integer bookId, Book bookData) {
-		if ( bookRepository.existsById(bookId) ) {
-			Optional<Book> bookRetrieve = bookRepository.findOneBookById(bookId);
+	public boolean updateBookInfo(Integer bookId, JSONObject jsonDataBook) throws JSONException {
+		Optional<Book> bookRetrieved = bookRepository.findOneBookById(bookId);
+		if ( bookRetrieved.isPresent() ) {
+			Book currentBook = bookRetrieved.get();
 			
-			if (bookRetrieve.isPresent()) {
-				Book bookToUpdate = bookRetrieve.get();
-				
-				if ( bookData.getBookName() != null || ! (bookData.getBookName() == "") ) bookToUpdate.setBookName(bookData.getBookName()); 
-				if ( bookData.getIsbn() != null || ! (bookData.getIsbn() == "") ) bookToUpdate.setIsbn(bookData.getIsbn());
-				if ( bookData.getPublishYear() != 0 ) bookToUpdate.setPublishYear(bookData.getPublishYear()); 
-				
-				if ( bookData.getPrice() != 0.0f  ) bookToUpdate.setPrice(bookData.getPrice());
-				if ( bookData.getDescription() == null || !(bookData.getDescription() == "") ) bookToUpdate.setDescription(bookData.getDescription());
-				if ( bookData.getPages() != 0 ) bookToUpdate.setPages(bookData.getPages());
-				/*
-				if ( bookData.getAuthor() != null )
-				if ( bookData.getTopic() != null  )
-				if ( bookData.getPublisher() != null )
-				*/
-				return bookRepository.save(bookToUpdate);
-			} else {
-				return null;
-			}
-		
+			refreshBookInfo(currentBook, jsonDataBook);
+			
+			bookRepository.saveAndFlush(currentBook);
+			
+			return true;
 		} else {
-			return null;
+			return false;
 		}
+	}
+	
+	
+	private void refreshBookInfo (Book currentBook, JSONObject infoBookUpdate) throws JSONException {
+		
+		currentBook.setIsbn(infoBookUpdate.getString("isbn"));
+		currentBook.setBookName(infoBookUpdate.getString("book_name"));
+		currentBook.setPublishYear(infoBookUpdate.getInt("publish_year"));
+		currentBook.setPrice(  (Float) infoBookUpdate.get("book_price")  );
+		currentBook.setDescription(infoBookUpdate.getString("description"));
+		currentBook.setPages(infoBookUpdate.getInt("pages"));
+		
+		Integer idAuthor = infoBookUpdate.getInt("id_author");
+		Integer idTopic = infoBookUpdate.getInt("id_topic");
+		Integer idPublisher = infoBookUpdate.getInt("id_publisher");
+		
+		// Get entities:
+		Optional<Author> authorRetrieve = authorRepo.findOneAuthorById(idAuthor);
+		Optional<Topic> topicRetrieve = topicRepo.findOneTopicById(idTopic);
+		Optional<Publisher> publisherRetrieve = publisherRepo.findOnePublisherById(idPublisher);
+		
+		if (authorRetrieve.isEmpty() ) {
+			throw new JSONException("None Author found by id: " + idAuthor);
+		}
+		if (topicRetrieve.isEmpty()) {
+			throw new JSONException("None Topic found by id: " + idTopic);
+		}
+		if (publisherRetrieve.isEmpty()) {
+			throw  new JSONException("None Publisher found by id: " + idPublisher);
+		}
+		currentBook.setAuthor(authorRetrieve.get());
+		currentBook.setTopic(topicRetrieve.get());
+		currentBook.setPublisher(publisherRetrieve.get());
+		
 	}
 	
 

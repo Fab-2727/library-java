@@ -23,7 +23,7 @@ public interface LibraryService {
 	public List<Book> getBooksByAuthorName(String authorName);
 	public List<Book> getBooksByAuthorId(Integer authorId);
 	public boolean addNewBook(JSONObject dataNewBook) throws JSONException;
-	public Book updateBookInfo(Integer bookId, Book bookData);
+	public boolean updateBookInfo(Integer bookId, JSONObject dataUpdateBook) throws JSONException;
 	
 	// Topic table
 	public List<Topic> getAllTopics();

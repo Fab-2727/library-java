@@ -160,7 +160,7 @@ public class LibraryController {
 			
 			JSONObject jsonNewBook = new JSONObject(JsonMessageBook);
 			
-			if ( jsonNewBook == null || jsonNewBook.toString() == "" ) {
+			if ( jsonNewBook == null || jsonNewBook.toString().equals("") ) {
 				System.out.println("Invalid payload, cannot be empty");
 				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, cannot be empty");
 			}
@@ -213,6 +213,7 @@ public class LibraryController {
 				libraryService.addNewBook(jsonNewBook);
 				return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Book created\"}");
 			} catch (JSONException e) {
+				e.printStackTrace();
 				return new ResponseEntity<Object>(
 						new ApiError(HttpStatus.valueOf(badRequestHttpCode), badRequestHttpCode,
 						e.getMessage()),
@@ -227,8 +228,60 @@ public class LibraryController {
 	}
 	
 	@PutMapping(path = "/book/update", consumes = "application/json", produces = "application/json")
-	public void updateBook(@Valid @NonNull @RequestBody Book book) {
-		return;
+	public ResponseEntity<Object> updateBook(@NonNull @RequestBody String jsonMessageBook,  @RequestParam("id") Integer idBook) {
+		try {
+			
+			JSONObject jsonBookUpdate = new JSONObject(jsonMessageBook);
+			
+			if ( jsonBookUpdate == null || jsonBookUpdate.toString().equals("") ) {
+				System.out.println("Invalid payload, cannot be empty");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, cannot be empty");
+			}
+			
+			// None validation over fields (except FKs). The validations should be address in the GUI.
+			// Plus, one possibility is that the user wants to make all the changes he/she wants.
+			
+			if ( ! jsonBookUpdate.has("id_author") || jsonBookUpdate.isNull("id_author") ) {
+				System.out.println("Invalid payload, missing 'id_author' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_author' key");
+			}
+			
+			if ( ! jsonBookUpdate.has("id_publisher") || jsonBookUpdate.isNull("id_publisher") ) {
+				System.out.println("Invalid payload, missing 'id_publisher' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_publisher' key");
+			}
+			
+			if ( ! jsonBookUpdate.has("id_topic") || jsonBookUpdate.isNull("id_topic") ) {
+				System.out.println("Invalid payload, missing 'id_topic' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_topic' key");
+			}
+			
+			try {
+				boolean rspService = libraryService.updateBookInfo(idBook, jsonBookUpdate);
+				if (rspService) {
+					return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Book created\"}");
+				}
+				
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode),
+						badRequestHttpCode,
+						"None book found by the ID: " + idBook),
+						HttpStatus.valueOf(badRequestHttpCode));
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode), badRequestHttpCode,
+						e.getMessage()),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		
 	}
 
 	// End of 'Book' entity controller methods
