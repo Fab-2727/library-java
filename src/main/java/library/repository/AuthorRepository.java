@@ -15,6 +15,7 @@ public interface AuthorRepository extends JpaRepository<Author,Integer> {
 	@Query("SELECT au FROM Author au WHERE au.id = ?1")
 	public Optional<Author> findOneAuthorById(Integer id);
 	
+	@Query("SELECT author FROM Author author WHERE author.authorName like %?1%")
 	public List<Author> findByAuthorName(String authorName);
 	
 }

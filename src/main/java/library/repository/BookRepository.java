@@ -18,6 +18,7 @@ public interface BookRepository extends JpaRepository<Book, Integer>{
 	public Optional<Book> findOneBookById(Integer id);
 	
 	// Query for books by name
+	@Query("SELECT book FROM Book book WHERE book.bookName like %?1%")
 	public List<Book> findByBookName(String bookName);
 	
 	// Query for books by CATEGORY

@@ -14,6 +14,8 @@ public interface TopicRepository extends JpaRepository<Topic, Integer>{
 	@Query("SELECT topic FROM Topic topic WHERE topic.id = ?1")
 	public Optional<Topic> findOneTopicById(Integer id);
 	
+	
+	@Query("SELECT topic FROM Topic topic WHERE topic.topicName like %?1%")
 	public Optional<Topic> findByTopicName(String topicName);
 	
 }
