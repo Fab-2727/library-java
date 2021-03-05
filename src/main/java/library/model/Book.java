@@ -74,17 +74,6 @@ public class Book implements Serializable {
 	public Book() {
 	}
 
-	public Book(String isbn, String bookName, Integer publishYear, float price, String description, Integer pages) {
-		super();
-		this.isbn = isbn;
-		this.bookName = bookName;
-		this.publishYear = publishYear;
-		this.price = price;
-		this.description = description;
-		this.pages = pages;
-	}
-	
-
 	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull Integer publishYear, @NotNull Float price,
 			String description, Integer pages, Author author, Publisher publisher, Topic topic, Stock stock) {
 		super();
@@ -99,7 +88,6 @@ public class Book implements Serializable {
 		this.topic = topic;
 		this.stock = stock;
 	}
-	
 
 	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull Integer publishYear, @NotNull Float price,
 			String description, Integer pages, Author author, Publisher publisher, Topic topic) {
@@ -113,6 +101,27 @@ public class Book implements Serializable {
 		this.author = author;
 		this.publisher = publisher;
 		this.topic = topic;
+	}
+
+	/**
+	 * Constructor without relationships entities.
+	 * 
+	 * @param isbn
+	 * @param bookName
+	 * @param publishYear
+	 * @param price
+	 * @param description
+	 * @param pages
+	 */
+	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull Integer publishYear, @NotNull Float price,
+			String description, Integer pages) {
+		super();
+		this.isbn = isbn;
+		this.bookName = bookName;
+		this.publishYear = publishYear;
+		this.price = price;
+		this.description = description;
+		this.pages = pages;
 	}
 
 	public int getId() {
@@ -203,9 +212,5 @@ public class Book implements Serializable {
 		this.stock = stock;
 	}
 	
-	@Override
-	public String toString() {
-		return "Book data: "+bookName+" "+isbn+" "+publishYear+" "+price;
-	}
 
 }
