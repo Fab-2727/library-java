@@ -114,17 +114,21 @@ public class LibraryServiceImpl implements LibraryService {
 
 		// 'description' and 'pages' are the only properties to validate here.
 		String isbn = dataNewBook.getString("isbn");
-		String bookName = dataNewBook.getString("book_name");
-		Integer publishYear = dataNewBook.getInt("publish_year");
-		Float book_price = (Float) dataNewBook.get("book_price");
+		String bookName = dataNewBook.getString("bookName");
+		Integer publishYear = dataNewBook.getInt("publishYear");
+		System.out.println("Bool" +  dataNewBook.has("price"));
+		Double bookPrice = dataNewBook.getDouble("price");
+		float bookPriceFl = dataNewBook.getFloat("price");
+		Float bookPriceFloatTwo = dataNewBook.getFloat("price");
+		
 		
 		// Validations over 'description' and 'pages'.
 		String description = dataNewBook.has("description") ? dataNewBook.getString("description") : "";
 		Integer pages = dataNewBook.has("pages") ? dataNewBook.getInt("pages") : 0;
 		
-		Integer idAuthor = dataNewBook.getInt("id_author");
-		Integer idTopic = dataNewBook.getInt("id_topic");
-		Integer idPublisher = dataNewBook.getInt("id_publisher");
+		Integer idAuthor = dataNewBook.getInt("idAuthor");
+		Integer idTopic = dataNewBook.getInt("idTopic");
+		Integer idPublisher = dataNewBook.getInt("idPublisher");
 		
 		// Get entities:
 		Optional<Author> authorRetrieve = authorRepo.findOneAuthorById(idAuthor);
@@ -141,7 +145,7 @@ public class LibraryServiceImpl implements LibraryService {
 			throw  new JSONException("None Publisher found by id: " + idPublisher);
 		}
 		
-		Book bookToPersist = new Book(isbn, bookName, publishYear, book_price, description, pages, authorRetrieve.get(), publisherRetrieve.get(), topicRetrieve.get());
+		Book bookToPersist = new Book(isbn, bookName, publishYear, bookPrice, description, pages, authorRetrieve.get(), publisherRetrieve.get(), topicRetrieve.get());
 		
 		bookRepository.saveAndFlush(bookToPersist);
 		

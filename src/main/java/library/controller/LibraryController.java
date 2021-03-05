@@ -65,7 +65,7 @@ public class LibraryController {
 		}
 	}
 
-	@GetMapping(path = " /book/name", produces = "application/json")
+	@GetMapping(path = "/book/name", produces = "application/json")
 	public ResponseEntity<Object> getBooksByName(@NonNull @RequestParam("name-book") String nameBook) {
 		List<Book> booksFound = libraryService.getBooksByName(nameBook);
 		
@@ -142,20 +142,20 @@ public class LibraryController {
 		}
 		
 	}
-	// not yet
-	@PostMapping(path = "/book/add-book", consumes = "application/json", produces = "application/json")
+
+	/**
+	 * Método no implementado.
+	 * @param book
+	 * @return
+	 */
+	@PostMapping(path = "/deprecated-method", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> addNewBook(@Valid @NonNull @RequestBody Book book) {
-		
-		System.out.println(book.toString());
-		
 		return ResponseEntity.status(successfulHttpCode).body(book);
 	}
-	
-	
+
 	// Implementation of add-book with String as JSONObject
-	
+	@PostMapping(path = "/book/add-book", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> addNewBookFeature(@NonNull @RequestBody String JsonMessageBook) {
-		
 		try {
 			
 			JSONObject jsonNewBook = new JSONObject(JsonMessageBook);
@@ -170,19 +170,19 @@ public class LibraryController {
 				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'isbn' key");
 			}
 			
-			if ( ! jsonNewBook.has("book_name") || jsonNewBook.isNull("book_name") || jsonNewBook.getString("book_name").isEmpty() ) {
-				System.out.println("Invalid payload, missing 'book_name' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'book_name' key");
+			if ( ! jsonNewBook.has("bookName") || jsonNewBook.isNull("bookName") || jsonNewBook.getString("bookName").isEmpty() ) {
+				System.out.println("Invalid payload, missing 'bookName' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'bookName' key");
 			}
 			
-			if ( ! jsonNewBook.has("publish_year") || jsonNewBook.isNull("publish_year") ) {
-				System.out.println("Invalid payload, missing 'publish_year' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publish_year' key");
+			if ( ! jsonNewBook.has("publishYear") || jsonNewBook.isNull("publishYear") ) {
+				System.out.println("Invalid payload, missing 'publishYear' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publishYear' key");
 			}
 			
-			if ( ! jsonNewBook.has("book_price") || jsonNewBook.isNull("book_price") ) {
-				System.out.println("Invalid payload, missing 'book_price' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'book_price' key");
+			if ( ! jsonNewBook.has("price") || jsonNewBook.isNull("price") ) {
+				System.out.println("Invalid payload, missing 'price' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'price' key");
 			}
 			
 			/*
@@ -193,19 +193,19 @@ public class LibraryController {
 			 * 
 			 */
 			
-			if ( ! jsonNewBook.has("id_author") || jsonNewBook.isNull("id_author") ) {
-				System.out.println("Invalid payload, missing 'id_author' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_author' key");
+			if ( ! jsonNewBook.has("idAuthor") || jsonNewBook.isNull("idAuthor") ) {
+				System.out.println("Invalid payload, missing 'idAuthor' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idAuthor' key");
 			}
 			
-			if ( ! jsonNewBook.has("id_publisher") || jsonNewBook.isNull("id_publisher") ) {
-				System.out.println("Invalid payload, missing 'id_publisher' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_publisher' key");
+			if ( ! jsonNewBook.has("idPublisher") || jsonNewBook.isNull("idPublisher") ) {
+				System.out.println("Invalid payload, missing 'idPublisher' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idPublisher' key");
 			}
 			
-			if ( ! jsonNewBook.has("id_topic") || jsonNewBook.isNull("id_topic") ) {
-				System.out.println("Invalid payload, missing 'id_topic' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_topic' key");
+			if ( ! jsonNewBook.has("idTopic") || jsonNewBook.isNull("idTopic") ) {
+				System.out.println("Invalid payload, missing 'idTopic' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idTopic' key");
 			}
 			
 			// Trying to persist book to the database
