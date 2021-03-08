@@ -23,7 +23,7 @@ public interface LibraryService {
 	public List<Book> getBooksByAuthorName(String authorName);
 	public List<Book> getBooksByAuthorId(Integer authorId);
 	public boolean addNewBook(JSONObject dataNewBook) throws JSONException;
-	public boolean updateBookInfo(Integer bookId, JSONObject dataUpdateBook) throws JSONException;
+	public String updateBookInfo(Integer bookId, JSONObject dataUpdateBook) throws Exception;
 	
 	// Topic table
 	public List<Topic> getAllTopics();
@@ -33,8 +33,9 @@ public interface LibraryService {
 
 	// Stock table
 	public List<Stock> getAllStocks();
-	public Stock updateStock(Integer bookId, Integer stockBook);
 	public Integer getStockByBookId(Integer bookId);
+	public boolean addNewStock(JSONObject dataNewBook);
+	public Stock updateStock(Integer bookId, Integer stockBook);
 
 	// Publisher table
 	public List<Publisher> getAllPublishers();

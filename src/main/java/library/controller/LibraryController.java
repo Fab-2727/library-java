@@ -149,13 +149,13 @@ public class LibraryController {
 	 * @return
 	 */
 	@PostMapping(path = "/deprecated-method", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Object> addNewBook(@Valid @NonNull @RequestBody Book book) {
+	public ResponseEntity<Object> addNewBookDeprecated(@Valid @NonNull @RequestBody Book book) {
 		return ResponseEntity.status(successfulHttpCode).body(book);
 	}
 
 	// Implementation of add-book with String as JSONObject
 	@PostMapping(path = "/book/add-book", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Object> addNewBookFeature(@NonNull @RequestBody String JsonMessageBook) {
+	public ResponseEntity<Object> addNewBook(@NonNull @RequestBody String JsonMessageBook) {
 		try {
 			
 			JSONObject jsonNewBook = new JSONObject(JsonMessageBook);
@@ -213,11 +213,11 @@ public class LibraryController {
 				libraryService.addNewBook(jsonNewBook);
 				return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Book created\"}");
 			} catch (JSONException e) {
-				e.printStackTrace();
 				return new ResponseEntity<Object>(
-						new ApiError(HttpStatus.valueOf(badRequestHttpCode), badRequestHttpCode,
+						new ApiError(HttpStatus.valueOf(notFoundHttpCode), notFoundHttpCode,
+						e.getMessage(),
 						e.getMessage()),
-						HttpStatus.valueOf(badRequestHttpCode));
+						HttpStatus.valueOf(notFoundHttpCode));
 			}
 			
 		} catch (JSONException e) {
@@ -241,37 +241,40 @@ public class LibraryController {
 			// None validation over fields (except FKs). The validations should be address in the GUI.
 			// Plus, one possibility is that the user wants to make all the changes he/she wants.
 			
-			if ( ! jsonBookUpdate.has("id_author") || jsonBookUpdate.isNull("id_author") ) {
-				System.out.println("Invalid payload, missing 'id_author' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_author' key");
+			if ( ! jsonBookUpdate.has("idAuthor") || jsonBookUpdate.isNull("idAuthor") ) {
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idAuthor' key");
 			}
 			
-			if ( ! jsonBookUpdate.has("id_publisher") || jsonBookUpdate.isNull("id_publisher") ) {
-				System.out.println("Invalid payload, missing 'id_publisher' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_publisher' key");
+			if ( ! jsonBookUpdate.has("idPublisher") || jsonBookUpdate.isNull("idPublisher") ) {
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idPublisher' key");
 			}
 			
-			if ( ! jsonBookUpdate.has("id_topic") || jsonBookUpdate.isNull("id_topic") ) {
-				System.out.println("Invalid payload, missing 'id_topic' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_topic' key");
+			if ( ! jsonBookUpdate.has("idTopic") || jsonBookUpdate.isNull("idTopic") ) {
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idTopic' key");
 			}
 			
 			try {
-				boolean rspService = libraryService.updateBookInfo(idBook, jsonBookUpdate);
-				if (rspService) {
+				String rspService = libraryService.updateBookInfo(idBook, jsonBookUpdate);
+				if (rspService.equals("")) {
 					return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Book created\"}");
 				}
-				
 				return new ResponseEntity<Object>(
 						new ApiError(HttpStatus.valueOf(badRequestHttpCode),
 						badRequestHttpCode,
-						"None book found by the ID: " + idBook),
+						rspService),
 						HttpStatus.valueOf(badRequestHttpCode));
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
 				return new ResponseEntity<Object>(
 						new ApiError(HttpStatus.valueOf(badRequestHttpCode), badRequestHttpCode,
+						e.getMessage()),
+						HttpStatus.valueOf(badRequestHttpCode));
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode), badRequestHttpCode,
+						e.getCause().toString(),
 						e.getMessage()),
 						HttpStatus.valueOf(badRequestHttpCode));
 			}
@@ -305,7 +308,7 @@ public class LibraryController {
 	}
 
 	// Get one topic by Id
-	@GetMapping(path = "/topic/by-id", produces = "application/json")
+	@GetMapping(path = "/topic", produces = "application/json")
 	public ResponseEntity<Object> getTopicById(@NonNull @RequestParam("id") Integer idTopic) {
 		Topic topicFound = libraryService.getTopicById(idTopic);
 		if (topicFound != null) {
@@ -319,7 +322,7 @@ public class LibraryController {
 	}
 
 	// Get one topic by Name
-	@GetMapping(path = "/topic", produces = "application/json")
+	@GetMapping(path = "/topic/param", produces = "application/json")
 	public ResponseEntity<Object> getTopicByName(@NonNull @RequestParam("name") String nameTopic) {
 		Topic topicFound = libraryService.getTopicByName(nameTopic);
 		if (topicFound != null) {
@@ -334,10 +337,12 @@ public class LibraryController {
 
 	// Add one topic
 	@PostMapping(path = "/topic/add-topic")
-	public ResponseEntity<String> addNewTopic(@Valid @NonNull @RequestBody Topic topic) {
-
+	public ResponseEntity<String> addNewTopic(@Valid @NonNull @RequestBody String topicData) {
 		try {
-			libraryService.addNewTopic(topic);
+			JSONObject topicJson = new JSONObject(topicData);
+			Topic topicToPersist = new Topic(topicJson.getString("topicName"));
+			
+			libraryService.addNewTopic(topicToPersist);
 			return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Topic created\"}");
 		} catch (IllegalArgumentException e) {
 			// get Exception for logging.
@@ -357,7 +362,7 @@ public class LibraryController {
 
 	// Start of 'Stock' entity controller methods
 
-	@GetMapping(path = "stock/all", produces = "application/json")
+	@GetMapping(path = "/stock/all", produces = "application/json")
 	public ResponseEntity<Object> getAllStocks() {
 		List<Stock> stocksFound = libraryService.getAllStocks();
 		if (stocksFound != null && !stocksFound.isEmpty()) {
@@ -369,7 +374,56 @@ public class LibraryController {
 		}
 	}
 
-	@PutMapping(path = "stock/update", consumes = "application/json", produces = "application/json")
+	// Stock by book ID
+	@GetMapping(path = "/book/stock/id-book", produces = "application/json")
+	public ResponseEntity<Object> getBookStockById(@NonNull @RequestParam("id") Integer idBook) {
+		Integer actualStock = libraryService.getStockByBookId(idBook);
+		if (actualStock != null) {
+			return ResponseEntity.status(successfulHttpCode).body("{\"stock\":\"" + actualStock + "\"}");
+		} else {
+			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+					, notFoundHttpCode
+					, "Couldn't find any stock of the book with id: " + idBook)
+					, HttpStatus.valueOf(notFoundHttpCode));
+		}
+	}
+
+	// NOT implemented yet
+	@PostMapping(path = "/stock", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Object> addNewStockOfBook (@NonNull @RequestBody String stockData) {
+		try {
+			
+			JSONObject jsonStock = new JSONObject(stockData);
+			
+			// Common validations
+			if ( ! jsonStock.has("stockBook") || jsonStock.isNull("stockBook") ) {
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'stockBook' key");
+			}
+			Integer idBook = 0;
+			if ( ! jsonStock.has("idBook") || jsonStock.isNull("idBook") ) {
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idBook' key");
+			}
+			idBook = jsonStock.getInt("idBook");
+			boolean rspService = libraryService.addNewStock(jsonStock);
+			
+			if (rspService) {
+				return ResponseEntity.status(createdHttpCode).body(null);
+			} else {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "Couldn't update the entity requested", "None book found by the ID: " + idBook),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (JSONException e) {
+			
+		}
+		
+		return null;
+	}
+	
+	@PutMapping(path = "/stock/update", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> updateStockOfBook(@NonNull @RequestParam("id-book") Integer idBook,
 			@RequestParam("stock") Integer stock)  {
 		try {
@@ -399,20 +453,6 @@ public class LibraryController {
 					, HttpStatus.valueOf(serverErrorHttpCode));
 		}
 	}
-	
-	// Stock by book ID
-	@GetMapping(path = "book/stock/id-book", produces = "application/json")
-	public ResponseEntity<Object> getBookStockById(@NonNull @RequestParam("id") Integer idBook) {
-		Integer actualStock = libraryService.getStockByBookId(idBook);
-		if (actualStock != null) {
-			return ResponseEntity.status(successfulHttpCode).body("{\"stock\":\"" + actualStock + "\"}");
-		} else {
-			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode)
-					, notFoundHttpCode
-					, "Couldn't find any stock of the book with id: " + idBook)
-					, HttpStatus.valueOf(notFoundHttpCode));
-		}
-	}
 
 	// End of 'Stock' entity controller methods
 
@@ -420,7 +460,7 @@ public class LibraryController {
 
 	// Start of 'Publisher' entity controller methods
 
-	@GetMapping(path = "/publisher", consumes = "application/json", produces = "application/json")
+	@GetMapping(path = "/publisher", produces = "application/json")
 	public ResponseEntity<Object> getPublisherById(@NonNull @RequestParam("id") Integer idPublisher) {
 		Publisher publisherRetrieved = libraryService.getPublisherById(idPublisher);
 		if (publisherRetrieved != null) {
@@ -452,7 +492,7 @@ public class LibraryController {
 	public ResponseEntity<Object> addNewPublisher(@Valid @NonNull @RequestBody Publisher publisher) {
 		try {
 			libraryService.addNewPublisher(publisher);
-			return ResponseEntity.status(successfulHttpCode).body("{\"response\":\"Publisher created\"}");
+			return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Publisher created\"}");
 		
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -482,15 +522,15 @@ public class LibraryController {
 
 			// Common validations
 			int publisherId = 0;
-			if ( ! publisherToUpdateData.has("id_publisher") || publisherToUpdateData.isNull("id_publisher") || publisherToUpdateData.getInt("id_publisher") == 0 ) {
-				System.out.println("Invalid payload, missing 'id_publisher' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_publisher' key");
+			if ( ! publisherToUpdateData.has("id") || publisherToUpdateData.isNull("id") || (publisherToUpdateData.getInt("id") == 0) ) {
+				System.out.println("Invalid payload, missing 'id' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id' key");
 			}
-			publisherId = publisherToUpdateData.getInt("id_publisher");
+			publisherId = publisherToUpdateData.getInt("id");
 			
-			if ( ! publisherToUpdateData.has("publisher_name") || publisherToUpdateData.isNull("publisher_name") ) {
-				System.out.println("Invalid payload, missing 'publisher_name' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publisher_name' key");
+			if ( ! publisherToUpdateData.has("publisherName") || publisherToUpdateData.isNull("publisherName") ) {
+				System.out.println("Invalid payload, missing 'publisherName' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'publisherName' key");
 			}
 			
 			if ( ! publisherToUpdateData.has("address") || publisherToUpdateData.isNull("address") ) {
@@ -506,14 +546,14 @@ public class LibraryController {
 			boolean rspService = libraryService.updatePublisherData(publisherId, publisherToUpdateData);
 			
 			if (rspService) {
-				return ResponseEntity.status(createdHttpCode).body("Created");
+				return ResponseEntity.status(createdHttpCode).body("");
 			} else {
 				return ResponseEntity.status(serverErrorHttpCode)
 						.body(" {\"response\":\"Couldn't update the publisher of ID: "+publisherToUpdateData.getInt("id_publisher")+"\"}");
 			}
 			
 		} catch (JSONException ex) {
-			System.out.println("Invalid message format, it must be JSON");
+			System.out.println("Invalid message format.");
 			ex.printStackTrace();
 			return null;
 		} 
@@ -524,6 +564,19 @@ public class LibraryController {
 	// ------------------------------------------------- //
 
 	// Start of 'Author' entity controller methods
+	
+	@GetMapping(path = "author/all", produces = "application/json")
+	public ResponseEntity<Object> getAllAuthors() {
+		List<Author> authorsRetrieve = libraryService.getAllAuthors();
+		if (authorsRetrieve != null && !authorsRetrieve.isEmpty()) {
+			return ResponseEntity.status(successfulHttpCode).body(authorsRetrieve);
+		} else {
+			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode)
+					, notFoundHttpCode
+					, "Couldn't retrieve any Author from the database")
+					, HttpStatus.valueOf(notFoundHttpCode));
+		}
+	}
 
 	@GetMapping(path = "author", produces = "application/json")
 	public ResponseEntity<Object> getAuthorById(@NonNull @RequestParam("id") Integer idAuthor) {
@@ -560,17 +613,24 @@ public class LibraryController {
 			e.printStackTrace();
 			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(badRequestHttpCode)
 					, badRequestHttpCode
-					, "Invalid usage: wrong payload")
+					, "Invalid usage: wrong payload"
+					,e.getMessage())
 					, HttpStatus.valueOf(badRequestHttpCode));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(serverErrorHttpCode)
 					, serverErrorHttpCode
-					, "An unexpected error has occurred")
+					, "An unexpected error has occurred"
+					,e.getMessage())
 					, HttpStatus.valueOf(serverErrorHttpCode));
 		}
 	}
-
+	
+	/**
+	 * This method could be improve. Instead of returning a 404 if the author with the given ID does not exists,
+	 * create it by default.
+	 * 
+	 */
 	@PutMapping(path = "author/update", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> updateAuthor(@Valid @NonNull @RequestBody String authorData) {
 		try {
@@ -584,21 +644,21 @@ public class LibraryController {
 
 			// Common validations
 			int idAuthor = 0;
-			if ( ! authorDataJson.has("id_author") || authorDataJson.isNull("id_author") || authorDataJson.getInt("id_author") == 0 ) {
-				System.out.println("Invalid payload, missing 'id_author' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id_author' key");
+			if ( ! authorDataJson.has("id") || authorDataJson.isNull("id") || authorDataJson.getInt("id") == 0 ) {
+				System.out.println("Invalid payload, missing 'id' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'id' key");
 			}
-			idAuthor = authorDataJson.getInt("id_author");
+			idAuthor = authorDataJson.getInt("id");
 			
-			if ( ! authorDataJson.has("author_name") || authorDataJson.isNull("author_name") ) {
-				System.out.println("Invalid payload, missing 'author_name' key");
-				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'author_name' key");				
+			if ( ! authorDataJson.has("authorName") || authorDataJson.isNull("authorName") ) {
+				System.out.println("Invalid payload, missing 'authorName' key");
+				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'authorName' key");				
 			}
 			
 			boolean rspService = libraryService.updateAuthor(idAuthor, authorDataJson);
 			
 			if (rspService) {
-				return ResponseEntity.status(successfulHttpCode).body("{\"response\":\"Author updated\"}");
+				return ResponseEntity.status(createdHttpCode).body("{\"response\":\"Author updated\"}");
 			}
 			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode)
 					, notFoundHttpCode
@@ -619,20 +679,5 @@ public class LibraryController {
 					, HttpStatus.valueOf(serverErrorHttpCode));
 		}
 	}
-
-	@GetMapping(path = "author/all", produces = "application/json")
-	public ResponseEntity<Object> getAllAuthors() {
-		List<Author> authorsRetrieve = libraryService.getAllAuthors();
-		if (authorsRetrieve != null && !authorsRetrieve.isEmpty()) {
-			return ResponseEntity.status(successfulHttpCode).body(authorsRetrieve);
-		} else {
-			return new ResponseEntity<Object>(new ApiError(HttpStatus.valueOf(notFoundHttpCode)
-					, notFoundHttpCode
-					, "Couldn't retrieve any Author from the database")
-					, HttpStatus.valueOf(notFoundHttpCode));
-		}
-	}
-	
-
 
 }
