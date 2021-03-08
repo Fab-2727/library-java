@@ -82,11 +82,4 @@ public class Publisher implements Serializable {
 		this.country = country;
 	}
 
-	@Override
-	public String toString() {
-		String StrPublisherToString = "Publisher: " + this.id + " " + this.publisherName + " " + this.address + " "
-				+ this.country;
-		return StrPublisherToString;
-	}
-
 }

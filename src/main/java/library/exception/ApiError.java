@@ -33,7 +33,7 @@ public class ApiError {
 	}
 	
 	/**
-	 * 
+	 * Use as default.
 	 * @param status must not be null {@link HttpStatus} 
 	 * @param statusCode {@link Integer} example: 404, 302, 307, etc..
 	 * @param message should be coherent and meaningful {@link String}
@@ -44,6 +44,13 @@ public class ApiError {
 		this.message = message;
 	}
 	
+	/**
+	 * One extra param: String error.
+	 * 
+	 * @param status must not be null {@link HttpStatus} 
+	 * @param statusCode {@link Integer} example: 404, 302, 307, etc..
+	 * @param message should be coherent and meaningful {@link String}
+	 */
 	public ApiError( @NonNull HttpStatus status, @NonNull int statusCode, @NonNull String message, @NonNull String error) {
 		this.status = status;
 		this.statusCode = statusCode;

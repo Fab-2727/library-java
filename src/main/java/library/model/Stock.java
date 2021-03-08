@@ -38,7 +38,13 @@ public class Stock implements Serializable {
 		super();
 		this.stock_book = stock_book;
 	}
-
+	
+	public Stock(int stock_book, Book book) {
+		super();
+		this.stock_book = stock_book;
+		this.book = book;
+	}
+	
 	public int getId() {
 		return id;
 	}

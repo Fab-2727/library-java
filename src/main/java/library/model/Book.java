@@ -89,6 +89,18 @@ public class Book implements Serializable {
 		this.stock = stock;
 	}
 
+	/**
+	 * Constructor with relationships.
+	 * @param isbn
+	 * @param bookName
+	 * @param publishYear
+	 * @param price
+	 * @param description
+	 * @param pages
+	 * @param author
+	 * @param publisher
+	 * @param topic
+	 */
 	public Book(@NotNull String isbn, @NotNull String bookName, @NotNull Integer publishYear, @NotNull Float price,
 			String description, Integer pages, Author author, Publisher publisher, Topic topic) {
 		super();
