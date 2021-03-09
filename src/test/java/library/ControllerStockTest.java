@@ -1,16 +1,20 @@
 package library;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.HashMap;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -44,6 +48,70 @@ public class ControllerStockTest extends AbstractTest{
 		}
 	}
 	
+
+	@Test
+	public void testGetStockByIdBookSuccess () {
+		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
+		try {
+			mvc.perform(get(getUrl()+"/book/stock/id-book").queryParam("id", "1"))
+			.andExpect(status().isOk());
+			
+			System.out.println(getSuccessTest());
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Using a wrong ID: 4543
+	 */
+	@Test
+	public void testGetStockByIdBookBadRequest() {
+		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
+		try {
+			mvc.perform(get(getUrl()+"/book/stock/id-book").queryParam("id", "4543"))
+			.andExpect(status().isNotFound());
+		
+			System.out.println(getSuccessTest());
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Test stock book
+	 */
+	 @Test
+	 public void testAddNewStockOfBook () {
+		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
+
+		try {
+			
+			JSONObject jsonStockData = new JSONObject();
+			jsonStockData.put("stockBook", 444);
+			jsonStockData.put("idBook", 4);
+			
+			ResultActions rstAction = mvc.perform(post(getUrl()+"/stock")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(jsonStockData.toString()));
+			
+			System.out.println(rstAction.andReturn().getResponse().getContentAsString());
+			
+			return;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	 }
+	
+	
+	/**
+	 * Test update stock.
+	 * 
+	 * Book ID: 1
+	 */
 	@Test
 	public void testUpdateStockByBookId () {
 		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
@@ -62,13 +130,18 @@ public class ControllerStockTest extends AbstractTest{
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	/**
+	 * Book ID: 4
+	 */
 	@Test
-	public void testGetStockByIdBookSuccess () {
+	public void testDeleteStockByBookId () {
 		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
 		try {
-			mvc.perform(get(getUrl()+"/book/stock/id-book").queryParam("id", "1"))
-			.andExpect(status().isOk());
+			
+			mvc.perform(delete(getUrl()+"/stock/delete").queryParam("id-book", "4"))
+				.andExpect(status().isOk());
 			
 			System.out.println(getSuccessTest());
 			return;
@@ -76,21 +149,6 @@ public class ControllerStockTest extends AbstractTest{
 			e.printStackTrace();
 		}
 	}
-	/**
-	 * Using a wrong ID: 4543
-	 */
-	@Test
-	public void testGetStockByIdBookBadRequest() {
-		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
-		try {
-			mvc.perform(get(getUrl()+"/book/stock/id-book").queryParam("id", "4543"))
-			.andExpect(status().isNotFound());
-		
-			System.out.println(getSuccessTest());
-			return;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+
 	
 }

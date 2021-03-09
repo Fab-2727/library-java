@@ -2,6 +2,7 @@ package library;
 
 import static org.assertj.core.api.Assertions.not;
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -121,6 +122,25 @@ public class ControllerAuthorTest extends AbstractTest {
 			System.out.println(getSuccessTest());
 			return;
 			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * Author ID: 4
+	 */
+	@Test
+	public void testDeleteAuthorById () {
+		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
+		try {
+			
+			mvc.perform(delete(getUrl()+"/author/delete").queryParam("id", "4"))
+				.andExpect(status().isOk());
+			
+			System.out.println(getSuccessTest());
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

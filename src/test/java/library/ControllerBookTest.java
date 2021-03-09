@@ -3,6 +3,7 @@ package library;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -433,6 +434,23 @@ class ControllerBookTest extends AbstractTest {
 		}
 	}
 	
+	/**
+	 * Book ID: 6
+	 */
+	@Test
+	public void testDeleteBookById () {
+		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
+		try {
+			
+			mvc.perform(delete(getUrl()+"/book/delete").queryParam("id", "6"))
+				.andExpect(status().isOk());
+			
+			System.out.println(getSuccessTest());
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 }

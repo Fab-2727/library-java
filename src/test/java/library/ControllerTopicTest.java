@@ -3,6 +3,7 @@ package library;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -109,6 +110,24 @@ public class ControllerTopicTest extends AbstractTest {
 			
 			mvc.perform(post(urlTopic+"/add-topic").content(requestContent.toString()))
 			.andExpect(status().isCreated());
+			
+			System.out.println(getSuccessTest());
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Topic ID: 6
+	 */
+	@Test
+	public void testDeleteTopicById () {
+		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
+		try {
+			
+			mvc.perform(delete(getUrl()+"/topic/delete").queryParam("id", "6"))
+				.andExpect(status().isOk());
 			
 			System.out.println(getSuccessTest());
 			return;

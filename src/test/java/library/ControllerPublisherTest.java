@@ -1,6 +1,7 @@
 package library;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -104,6 +105,24 @@ public class ControllerPublisherTest extends AbstractTest{
 			return;
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Publisher ID: 6
+	 */
+	@Test
+	public void testDeletePublisherById () {
+		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
+		try {
+			
+			mvc.perform(delete(getUrl()+"/publisher/delete").queryParam("id", "6"))
+				.andExpect(status().isOk());
+			
+			System.out.println(getSuccessTest());
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
