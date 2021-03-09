@@ -1,13 +1,11 @@
 package library;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.containsStringIgnoringCase;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,19 +14,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import library.model.Book;
 
@@ -65,7 +55,6 @@ class ControllerBookTest extends AbstractTest {
 			System.out.println(getSuccessTest());
 			return;
 		} catch (Exception e) {
-			System.out.println(getFailTest());
 			e.printStackTrace();
 		}
 		
@@ -82,7 +71,6 @@ class ControllerBookTest extends AbstractTest {
 			System.out.println(getSuccessTest());
 			return;
 		} catch (Exception e) {
-			System.out.println(getFailTest());
 			e.printStackTrace();
 		}
 	}
@@ -100,7 +88,6 @@ class ControllerBookTest extends AbstractTest {
 			System.out.println(getSuccessTest());
 			return;
 		} catch (Exception e) {
-			System.out.println(getFailTest());
 			e.printStackTrace();
 		}
 	}

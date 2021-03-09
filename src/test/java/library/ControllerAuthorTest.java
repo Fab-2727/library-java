@@ -1,22 +1,14 @@
 package library;
 
-import static org.assertj.core.api.Assertions.not;
-import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import library.model.Author;
 
@@ -40,7 +32,7 @@ public class ControllerAuthorTest extends AbstractTest {
 		System.out.println("##############    Starting test: "+ new Exception().getStackTrace()[0].getMethodName() +"    ##############");
 		try {
 			
-			MvcResult rst = mvc.perform(get(getUrl()+"/author/all")).andReturn();
+			mvc.perform(get(getUrl()+"/author/all")).andExpect(status().isOk());
 			
 			System.out.println(getSuccessTest());
 			return;
