@@ -213,8 +213,19 @@ public class LibraryServiceImpl implements LibraryService {
 		return "";
 	}
 	
+	@Transactional
+	@Override
+	public boolean deleteBookById(Integer idBook) {
+		
+		if (bookRepository.existsById(idBook)) {
+			bookRepository.deleteById(idBook);
+			return true;
+		}
+		return false;
+	}
 
 	// TOPIC methods IMPLEMENTATION
+	
 	@Override
 	public List<Topic> getAllTopics() {
 		List<Topic> allTopics = topicRepo.findAll();
@@ -250,6 +261,16 @@ public class LibraryServiceImpl implements LibraryService {
 	public Topic addNewTopic(Topic topicNew) {
 		return topicRepo.save(topicNew);
 	}
+	
+	@Transactional
+	@Override
+	public boolean deleteTopicById(Integer topicId) {
+		if (topicRepo.existsById(topicId)) {
+			topicRepo.deleteById(topicId);
+			return true;
+		}
+		return false;
+	}
 
 	// STOCK methods IMPLEMENTATION
 	
@@ -266,7 +287,8 @@ public class LibraryServiceImpl implements LibraryService {
 	
 	@Transactional
 	@Override
-	public boolean addNewStock(JSONObject dataStock) {
+	public boolean addNewStock(JSONObject dataStock) throws JSONException, Exception{
+
 		Optional<Book> bookRetrieve = bookRepository.findOneBookById(dataStock.getInt("idBook"));
 		if ( bookRetrieve.isPresent() ) {
 			Stock stockToAdd = new Stock(dataStock.getInt("stockBook"), bookRetrieve.get());
@@ -303,6 +325,19 @@ public class LibraryServiceImpl implements LibraryService {
 			return null;
 		}
 	}
+	
+	@Transactional
+	@Override
+	public boolean deleteStockByBookId(Integer stockOfBookId) {
+
+		Optional<Stock> stockRetrieved = stockRepo.findByIdBook(stockOfBookId);
+		
+		if ( stockRetrieved.isPresent() ) {
+			stockRepo.delete(stockRetrieved.get());
+			return true;
+		}
+		return false;
+	}
 
 	// PUBLISHER methods IMPLEMENTATION
 	@Override
@@ -335,7 +370,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Transactional
 	@Override
-	public Boolean deletePublisherById(Integer publisherId) {
+	public boolean deletePublisherById(Integer publisherId) {
 		if (publisherRepo.existsById(publisherId)) {
 			// About to delete publisher
 			publisherRepo.deleteById(publisherId);
@@ -426,6 +461,16 @@ public class LibraryServiceImpl implements LibraryService {
 		} else {
 			return null;
 		}
+	}
+	
+	@Transactional
+	@Override
+	public boolean deleteAuthorById(Integer authorId) {
+		if (authorRepo.existsById(authorId)) {
+			authorRepo.deleteById(authorId);
+			return true;
+		}
+		return false;
 	}
 
 }

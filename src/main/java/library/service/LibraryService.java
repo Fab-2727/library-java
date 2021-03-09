@@ -24,18 +24,21 @@ public interface LibraryService {
 	public List<Book> getBooksByAuthorId(Integer authorId);
 	public boolean addNewBook(JSONObject dataNewBook) throws JSONException;
 	public String updateBookInfo(Integer bookId, JSONObject dataUpdateBook) throws Exception;
+	public boolean deleteBookById(Integer idBook);
 	
 	// Topic table
 	public List<Topic> getAllTopics();
 	public Topic getTopicById(Integer topicId);
 	public Topic getTopicByName(String topicName);
 	public Topic addNewTopic(Topic topicNew);
+	public boolean deleteTopicById(Integer idTopic);
 
 	// Stock table
 	public List<Stock> getAllStocks();
 	public Integer getStockByBookId(Integer bookId);
-	public boolean addNewStock(JSONObject dataNewBook);
+	public boolean addNewStock(JSONObject dataNewBook) throws JSONException, Exception;
 	public Stock updateStock(Integer bookId, Integer stockBook);
+	public boolean deleteStockByBookId(Integer bookId);
 
 	// Publisher table
 	public List<Publisher> getAllPublishers();
@@ -43,7 +46,7 @@ public interface LibraryService {
 	public Boolean publisherExists(Integer publisherId);
 	public void addNewPublisher(Publisher publisherNew);
 	public boolean updatePublisherData(Integer publisherId, JSONObject publisherData) throws JSONException;
-	public Boolean deletePublisherById(Integer publisherId);
+	public boolean deletePublisherById(Integer publisherId);
 	
 	// Author table
 	public List<Author> getAllAuthors();
@@ -51,6 +54,7 @@ public interface LibraryService {
 	public List<Author> getAuthorsByName(String authorName);
 	public Author addNewAuthor(Author authorNew);
 	public boolean updateAuthor(Integer authorId, JSONObject authorData) throws JSONException;
+	public boolean deleteAuthorById(Integer authorId);
 	
 	// test methods
 	

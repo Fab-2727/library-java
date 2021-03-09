@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -140,19 +141,41 @@ public class LibraryController {
 							, "Couldn't find any book which has an author id of: "+ idAuthor),
 					HttpStatus.valueOf(notFoundHttpCode));
 		}
-		
 	}
 
-	/**
-	 * Método no implementado.
-	 * @param book
-	 * @return
-	 */
-	@PostMapping(path = "/deprecated-method", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Object> addNewBookDeprecated(@Valid @NonNull @RequestBody Book book) {
-		return ResponseEntity.status(successfulHttpCode).body(book);
-	}
+	@DeleteMapping(path = "/book/delete", produces = "application/json")
+	public ResponseEntity<Object> deleteBookById (@RequestParam("id") Integer idBook) {
+		try {
+			if (idBook == 0) {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "ID cannot be '0'."),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+			boolean rspService = libraryService.deleteBookById(idBook);
 
+			if (rspService) {
+				return ResponseEntity.status(successfulHttpCode).body("");
+			} else {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "Couldn't find any book with the ID: "+ idBook),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+							, badRequestHttpCode
+							, e.getMessage()),
+					HttpStatus.valueOf(badRequestHttpCode));
+		}
+	}
+	
 	// Implementation of add-book with String as JSONObject
 	@PostMapping(path = "/book/add-book", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> addNewBook(@NonNull @RequestBody String JsonMessageBook) {
@@ -356,6 +379,40 @@ public class LibraryController {
 
 	}
 
+	@DeleteMapping(path = "/topic/delete", produces = "application/json")
+	public ResponseEntity<Object> deleteTopicById (@RequestParam("id") Integer idTopic) {
+		try {
+			
+			if (idTopic == 0) {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "ID cannot be '0'."),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+			boolean rspService = libraryService.deleteTopicById(idTopic);
+
+			if (rspService) {
+				return ResponseEntity.status(successfulHttpCode).body("");
+			} else {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "Couldn't find any topic with the ID: "+ idTopic),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+							, badRequestHttpCode
+							, e.getMessage()),
+					HttpStatus.valueOf(badRequestHttpCode));
+		}
+	}
+	
 	// End of 'Topic' entity controller methods
 
 	// ------------------------------------------------- //
@@ -388,7 +445,6 @@ public class LibraryController {
 		}
 	}
 
-	// NOT implemented yet
 	@PostMapping(path = "/stock", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> addNewStockOfBook (@NonNull @RequestBody String stockData) {
 		try {
@@ -404,10 +460,14 @@ public class LibraryController {
 				return ResponseEntity.status(badRequestHttpCode).body("Invalid payload, missing 'idBook' key");
 			}
 			idBook = jsonStock.getInt("idBook");
+			
 			boolean rspService = libraryService.addNewStock(jsonStock);
 			
 			if (rspService) {
-				return ResponseEntity.status(createdHttpCode).body(null);
+				JSONObject response = new JSONObject();
+				response.put("response", "Stock created");
+				
+				return ResponseEntity.status(createdHttpCode).body(response);
 			} else {
 				return new ResponseEntity<Object>(
 						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
@@ -417,10 +477,23 @@ public class LibraryController {
 			}
 			
 		} catch (JSONException e) {
-			
+			e.printStackTrace();
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+							, badRequestHttpCode
+							, e.getMessage()
+							, e.getMessage()),
+					HttpStatus.valueOf(badRequestHttpCode));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(serverErrorHttpCode)
+							, badRequestHttpCode
+							, e.getMessage()
+							, e.getMessage()),
+					HttpStatus.valueOf(serverErrorHttpCode));
 		}
 		
-		return null;
 	}
 	
 	@PutMapping(path = "/stock/update", consumes = "application/json", produces = "application/json")
@@ -451,6 +524,40 @@ public class LibraryController {
 					, serverErrorHttpCode
 					, "An unexpected error has occurred")
 					, HttpStatus.valueOf(serverErrorHttpCode));
+		}
+	}
+	
+	@DeleteMapping(path = "/stock/delete", produces = "application/json")
+	public ResponseEntity<Object> deleteStockByBookId (@RequestParam("id-book") Integer idBookStock) {
+		try {
+			
+			if (idBookStock == 0) {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "ID cannot be '0'."),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+			boolean rspService = libraryService.deleteStockByBookId(idBookStock);
+
+			if (rspService) {
+				return ResponseEntity.status(successfulHttpCode).body("");
+			} else {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "Couldn't find any stock with the book ID: "+ idBookStock),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+							, badRequestHttpCode
+							, e.getMessage()),
+					HttpStatus.valueOf(badRequestHttpCode));
 		}
 	}
 
@@ -556,7 +663,41 @@ public class LibraryController {
 			System.out.println("Invalid message format.");
 			ex.printStackTrace();
 			return null;
-		} 
+		}
+	}
+	
+	@DeleteMapping(path = "/publisher/delete", produces = "application/json")
+	public ResponseEntity<Object> deletePublisherById (@RequestParam("id") Integer idPublisher) {
+		try {
+			
+			if (idPublisher == 0) {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "ID cannot be '0'."),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+			boolean rspService = libraryService.deletePublisherById(idPublisher);
+
+			if (rspService) {
+				return ResponseEntity.status(successfulHttpCode).body("");
+			} else {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "Couldn't find any publisher with the ID: "+ idPublisher),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+							, badRequestHttpCode
+							, e.getMessage()),
+					HttpStatus.valueOf(badRequestHttpCode));
+		}
 	}
 	
 	// End of 'Publisher' entity controller methods
@@ -677,6 +818,40 @@ public class LibraryController {
 					, serverErrorHttpCode
 					, "An unexpected error has occurred")
 					, HttpStatus.valueOf(serverErrorHttpCode));
+		}
+	}
+	
+	@DeleteMapping(path = "/author/delete", produces = "application/json")
+	public ResponseEntity<Object> deleteAuthorById (@RequestParam("id") Integer idAuthor) {
+		try {
+			
+			if (idAuthor == 0) {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "ID cannot be '0'."),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+			boolean rspService = libraryService.deleteAuthorById(idAuthor);
+
+			if (rspService) {
+				return ResponseEntity.status(successfulHttpCode).body("");
+			} else {
+				return new ResponseEntity<Object>(
+						new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+								, badRequestHttpCode
+								, "Couldn't find any publisher with the ID: "+ idAuthor),
+						HttpStatus.valueOf(badRequestHttpCode));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(
+					new ApiError(HttpStatus.valueOf(badRequestHttpCode)
+							, badRequestHttpCode
+							, e.getMessage()),
+					HttpStatus.valueOf(badRequestHttpCode));
 		}
 	}
 
