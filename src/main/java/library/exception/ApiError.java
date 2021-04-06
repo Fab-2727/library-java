@@ -9,8 +9,8 @@ import org.springframework.lang.NonNull;
 
 /**
  * {@code ApiError} is a class that represents a simple structure.
- * The main function of this class is to return to the consumer 
- * a comprehensible error, so it can know with certainty what happened.
+ * The main function of this class is to return a comprehensible error
+ * to the consumer so it can know with certainty what went wrong.
  * 
  * @author Fabrizio Sosa
  */
@@ -129,6 +129,12 @@ public class ApiError {
 
 	public void setStatusCode(int statusCode) {
 		this.statusCode = statusCode;
+	}
+
+	@Override
+	public String toString() {
+		return "ApiError [status=" + status + ", statusCode=" + statusCode + ", message=" + message + ", errors="
+				+ errors + ", cause=" + cause + "]";
 	}
 	
 	
