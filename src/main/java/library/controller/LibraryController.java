@@ -6,6 +6,8 @@ import javax.validation.Valid;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,10 +30,18 @@ import library.model.Stock;
 import library.model.Topic;
 import library.service.LibraryServiceImpl;
 
+
+/**
+ * 
+ * @author Fabrizio Sosa
+ *
+ */
 @RestController
 @RequestMapping("/library")
 public class LibraryController {
-
+	
+	// Logger logger = LoggerFactory.getLogger(LibraryController.class);
+	
 	@Autowired
 	private LibraryServiceImpl libraryService;
 
@@ -45,11 +55,6 @@ public class LibraryController {
 	private int notFoundHttpCode;
 	@Value("${server.error.httpstatus}")
 	private int serverErrorHttpCode;
-
-	@GetMapping(path = "/index")
-	public String index() {
-		return "Welcome, this is the index page";
-	}
 
 	// Start of 'Book' entity controller methods
 
