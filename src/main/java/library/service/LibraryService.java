@@ -10,7 +10,11 @@ import library.model.Book;
 import library.model.Publisher;
 import library.model.Stock;
 import library.model.Topic;
-
+/**
+ * 
+ * @author Fabrizio Sosa
+ *
+ */
 public interface LibraryService {
 
 	// 13/01/2021	=> none DELETE method, implement later for all entities

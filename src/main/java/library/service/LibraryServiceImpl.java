@@ -21,6 +21,11 @@ import library.repository.PublisherRepository;
 import library.repository.StockRepository;
 import library.repository.TopicRepository;
 
+/**
+ * 
+ * @author Fabrizio Sosa
+ *
+ */
 @Service
 public class LibraryServiceImpl implements LibraryService {
 

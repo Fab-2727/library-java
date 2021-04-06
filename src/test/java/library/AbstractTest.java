@@ -12,6 +12,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * 
+ * @author Fabrizio Sosa
+ *
+ */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = LibraryApplication.class)
 @WebAppConfiguration
